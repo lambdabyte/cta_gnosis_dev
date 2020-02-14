@@ -1,0 +1,17 @@
+version: '3.7'
+
+services: 
+
+    users:
+        build: 
+            context: ./users
+            dockerfile: Dockerfile
+        volumes:
+            - type: bind
+              source: ./users
+              target: /home/gnosis/services/backend
+        ports:
+            - 8000:5000
+        environment: 
+            - FLASK_APP=home/gnosis/services/users/gnosis.py
+            - FLASK_ENV=development
