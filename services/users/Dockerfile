@@ -5,6 +5,8 @@ RUN adduser -D gnosis
 WORKDIR /home/gnosis/services/users
 
 COPY requirements.txt requirements.txt
+RUN pip install -U pip
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 

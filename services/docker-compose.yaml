@@ -9,7 +9,7 @@ services:
         volumes:
             - type: bind
               source: ./users
-              target: /home/gnosis/services/backend
+              target: /home/gnosis/services/users
         ports:
             - 8000:5000
         environment: 
