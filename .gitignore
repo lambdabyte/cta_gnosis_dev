@@ -1,1 +1,3 @@
 /services/users/venv
+/services/gnosis/__pycache__
+/services/gnosis/app/__pycache__
