@@ -5,6 +5,10 @@ from flask_restx import Resource
 def index():
     return "Hello, Worsldss!"
 
+@app.route('/home')
+def home():
+    return "all shits"
+
 class Ping(Resource):
     def get(self):
         return {
