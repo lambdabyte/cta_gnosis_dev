@@ -1,13 +1,10 @@
 from app import app
 from flask_restx import Resource
-# test
-@app.route('/hello')
-def index():
-    return "Hello, Worsldss!"
+from flask import render_template
 
-@app.route('/home')
-def home():
-    return "all shits"
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 class Ping(Resource):
     def get(self):
