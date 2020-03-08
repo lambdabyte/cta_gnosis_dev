@@ -15,7 +15,7 @@ api = Api(app)
 app.config.from_object(DevelopmentConfig)
 
 
-# instantiate database
+#  instantiate database check this Dam
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
