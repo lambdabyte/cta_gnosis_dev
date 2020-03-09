@@ -12,14 +12,14 @@ class RegistrationForm(FlaskForm):
     )
     submit = SubmitField('Register')
 
-    def validate_username(self, entered_username):
+    def validate_entered_username(self, entered_username):
         # query users in database to find match for entered username
         user = User.query.filter_by(username=entered_username.data).first()
         # if match found, then username is already taken
         if user is not None:
             raise ValidationError('Please use a different username.')
     
-    def validate_email(self, entered_email):
+    def validate_entered_email(self, entered_email):
         # query user in db based on email to find entered email
         user = User.query.filter_by(email=entered_email.data).first()
         # if match found, then email is already in use
