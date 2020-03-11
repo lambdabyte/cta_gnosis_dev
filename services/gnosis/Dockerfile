@@ -6,6 +6,7 @@ WORKDIR /home/gnosis/services/gnosis
 
 COPY requirements.txt requirements.txt
 RUN pip install -U pip
+RUN pip install --upgrade setuptools
 RUN apk update && \
     apk add --virtual build-deps && \
     apk add postgresql-dev gcc python3-dev musl-dev && \

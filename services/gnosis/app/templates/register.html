@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div id="register-box" class="basic-border">
     <h1>Register</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
@@ -13,7 +14,7 @@
         </p>
         <p>
             {{ form.entered_email.label }}<br>
-            {{ form.entered_email(size=64) }}<br>
+            {{ form.entered_email(size=32) }}<br>
             {% for error in form.entered_email.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
@@ -34,4 +35,5 @@
         </p>
         <p>{{ form.submit() }}</p>
     </form>
+</div>
 {% endblock %}

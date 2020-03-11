@@ -14,5 +14,4 @@ services:
             - 8000:5000
         environment: 
             - FLASK_APP=home/gnosis/services/gnosis/gnosis.py
-            - DATABASE_URL=postgresql://postgres:robertnields2020@cta-gnosis-db-dev.cd1wzcrr5t3s.us-east-1.rds.amazonaws.com
 
