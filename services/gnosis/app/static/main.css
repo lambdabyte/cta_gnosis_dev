@@ -3,7 +3,15 @@
     width: 30vw;
     text-align: center;
     margin: auto;
-    margin-top: 6%;
+    margin-top: 4%;
 }
 
+h1.basic-h1 {
+    padding: 0px 0px 8px 0px;
+}
 
+.register-text {
+    width: 90%;
+    margin: auto;
+    margin-bottom: -4%;
+}
