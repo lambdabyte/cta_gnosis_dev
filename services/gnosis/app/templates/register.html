@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Register</h1>
+<div id="register-box" class="basic-border">
+    <h1 class="text-light bg-dark basic-h1">Register</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
             {{ form.entered_username.label }}<br>
-            {{ form.entered_username(size=32) }}<br>
+            {{ form.entered_username(class="form-control register-text", size=32) }}<br>
             {% for error in form.entered_username.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form.entered_email.label }}<br>
-            {{ form.entered_email(size=64) }}<br>
+            {{ form.entered_email(class="form-control register-text", size=32) }}<br>
             {% for error in form.entered_email.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form.entered_password.label }}<br>
-            {{ form.entered_password(size=32) }}<br>
+            {{ form.entered_password(class="form-control register-text", size=32) }}<br>
             {% for error in form.entered_password.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form.entered_password2.label }}<br>
-            {{ form.entered_password2(size=32) }}<br>
+            {{ form.entered_password2(class="form-control register-text", size=32) }}<br>
             {% for error in form.entered_password2.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>{{ form.submit() }}</p>
+        <p>{{ form.submit(class="btn btn-outline-dark") }}</p>
     </form>
+</div>
 {% endblock %}

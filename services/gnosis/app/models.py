@@ -12,6 +12,7 @@ class User(db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(256))
+    avatar_url = db.Column(db.String(256))
     subjects = db.relationship('Subject', secondary=usersubjects, lazy='subquery',
         backref=db.backref('users', lazy=True))
 
