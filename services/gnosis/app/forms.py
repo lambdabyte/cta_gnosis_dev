@@ -25,3 +25,9 @@ class RegistrationForm(FlaskForm):
         # if match found, then email is already in use
         if user is not None:
             raise ValidationError('Please use another email address.')
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
