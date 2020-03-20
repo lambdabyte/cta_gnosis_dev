@@ -18,7 +18,7 @@
             <a class="navbar-brand" href="#">Navbar</a>
   
               <ul class="navbar-nav mr-auto">      
-                  {% for x in ['home', 'register'] %}
+                  {% for x in ['home', 'register', 'login'] %}
                   <li {% if request.path  == url_for(x) %} class="nav-item active" {% endif %}><a href="{{ url_for(x) }}" class="nav-link">{{ x | capitalize }}</a></li>
                   {% endfor %}
               </ul>

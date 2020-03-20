@@ -1,4 +1,14 @@
+/* General */
 
+#required-splat {
+    margin-left: 4px;
+}
+
+#submitButton {
+    width: 98%;
+}
+
+/* Register */
 
 div#register-head-box {
     text-align: center;
@@ -11,17 +21,41 @@ div#register-container div.col {
     width: 40%;
 }
 
-#required-splat {
-    margin-left: 4px;
-}
 
 #register-button-box {
+    text-align: center;
+    margin-top: 4vh;
+}
+
+/* Login */
+
+div#loginContainer div.col {
+    margin: auto;
+    margin-top: 4%;
+    width: 100%;
+}
+
+div#loginBox {
+    width: 30%;
+    margin: auto;
+}
+
+div#loginHeadBox {
+    text-align: center;
+    margin-bottom: 2vh;
+}
+
+#loginButtonBox {
     text-align: center;
 }
 
 @media only screen and (max-width: 768px) {
 
     div#register-container div.col {
+        width: 100%;
+    }
+
+    div#loginBox {
         width: 100%;
     }
 
