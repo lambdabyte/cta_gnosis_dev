@@ -1,39 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="register-box" class="basic-border">
-    <h1 class="text-light bg-dark basic-h1">Register</h1>
-    <form action="" method="post">
+<div id="register-container" class="container-fluid">
+    <div class="col">
+    <div id="register-head-box">
+        <h1 class="text-dark basic-h1" id="register-head">Register <span class="desktop-text">New Account</span></h1>
+    </div>
+    <form action="" method="post" id="register-form">
         {{ form.hidden_tag() }}
-        <p>
-            {{ form.entered_username.label }}<br>
-            {{ form.entered_username(class="form-control register-text", size=32) }}<br>
+        <div class="form-group">
+            {{ form.entered_username.label }}<span id="required-splat" style="color: red;">*</span><br>
+            {{ form.entered_username(class="form-control", size=32) }}<br>
             {% for error in form.entered_username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red;">{{ error }}</span>
             {% endfor %}
-        </p>
-        <p>
-            {{ form.entered_email.label }}<br>
-            {{ form.entered_email(class="form-control register-text", size=32) }}<br>
+        </div>
+        <div class="form-group">
+            {{ form.entered_email.label }}<span id="required-splat" style="color: red;">*</span><br>
+            {{ form.entered_email(class="form-control", size=32) }}<br>
             {% for error in form.entered_email.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red;">{{ error }}</span>
             {% endfor %}
-        </p>
-        <p>
-            {{ form.entered_password.label }}<br>
-            {{ form.entered_password(class="form-control register-text", size=32) }}<br>
+        </div>
+        <div class="form-group">
+            {{ form.entered_password.label }}<span id="required-splat" style="color: red;">*</span><br>
+            {{ form.entered_password(class="form-control", size=32) }}<br>
             {% for error in form.entered_password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red;">{{ error }}</span>
             {% endfor %}
-        </p>
-        <p>
-            {{ form.entered_password2.label }}<br>
-            {{ form.entered_password2(class="form-control register-text", size=32) }}<br>
+        </div>
+        <div class="form-group">
+            {{ form.entered_password2.label }}<span id="required-splat" style="color: red;">*</span><br>
+            {{ form.entered_password2(class="form-control", size=32) }}<br>
             {% for error in form.entered_password2.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red;">{{ error }}</span>
             {% endfor %}
-        </p>
-        <p>{{ form.submit(class="btn btn-outline-dark") }}</p>
+        </div>
+        <div id="register-button-box">{{ form.submit(class="btn btn-outline-dark") }}</div>
     </form>
+    </div>
 </div>
 {% endblock %}
