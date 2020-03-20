@@ -1,17 +1,67 @@
-#register-box {
-    border: 1px solid black;
-    width: 30vw;
+/* General */
+
+#required-splat {
+    margin-left: 4px;
+}
+
+#submitButton {
+    width: 98%;
+}
+
+/* Register */
+
+div#register-head-box {
     text-align: center;
+    margin-bottom: 6vh;
+}
+
+div#register-container div.col {
     margin: auto;
     margin-top: 4%;
+    width: 40%;
 }
 
-h1.basic-h1 {
-    padding: 0px 0px 8px 0px;
+
+#register-button-box {
+    text-align: center;
+    margin-top: 4vh;
 }
 
-.register-text {
-    width: 90%;
+/* Login */
+
+div#loginContainer div.col {
     margin: auto;
-    margin-bottom: -4%;
+    margin-top: 4%;
+    width: 100%;
 }
+
+div#loginBox {
+    width: 30%;
+    margin: auto;
+}
+
+div#loginHeadBox {
+    text-align: center;
+    margin-bottom: 2vh;
+}
+
+#loginButtonBox {
+    text-align: center;
+}
+
+@media only screen and (max-width: 768px) {
+
+    div#register-container div.col {
+        width: 100%;
+    }
+
+    div#loginBox {
+        width: 100%;
+    }
+
+    .desktop-text {
+        display: none;
+       }
+     }
+
+  }
