@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Welcome to Gnosis, {{ user.username }}. Site under construction.</h1>
+    <h1>Welcome to Gnosis
+        {% if current_user.username is defined  %},
+         {{ current_user.username }}.
+        {% endif %}
+          Site under construction.</h1>
 {% endblock %}
