@@ -17,11 +17,21 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <a class="navbar-brand" href="#">Navbar</a>
   
-              <ul class="navbar-nav mr-auto">      
-                  {% for x in ['home', 'register', 'login'] %}
-                  <li {% if request.path  == url_for(x) %} class="nav-item active" {% endif %}><a href="{{ url_for(x) }}" class="nav-link">{{ x | capitalize }}</a></li>
-                  {% endfor %}
-              </ul>
+            <ul class="navbar-nav mr-auto">
+
+            <!-- If user is logged in/out set url name -->
+            {% if current_user.is_anonymous %}
+                {% set login_status = 'login' %}
+            {% else %}
+                {% set login_status = 'logout' %}
+            {% endif %}
+
+            <!-- For url name string in list, print url and highlight based on current page active -->
+            {% for x in ['home', 'register', login_status] %}
+                <li {% if request.path  == url_for(x) %} class="nav-item active" {% endif %}><a href="{{ url_for(x) }}" class="nav-link">{{ x | capitalize }}</a></li>
+            {% endfor %}
+
+            </ul>
             </div>
           </nav>
 

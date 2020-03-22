@@ -1,5 +1,6 @@
-from app import db
+from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 # Many to many table
 usersubjects = db.Table('usersubjects',
@@ -7,7 +8,7 @@ usersubjects = db.Table('usersubjects',
     db.Column('subject_id', db.Integer, db.ForeignKey('subject.id'), primary_key=True)
 )
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -31,4 +32,9 @@ class Subject(db.Model):
     color = db.Column(db.String(64))
 
     def __repr__(self):
-        return '<Subject {}>'.format(self.subject_name)  
+        return '<Subject {}>'.format(self.subject_name)
+
+# lets login module know where to find user id
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))  

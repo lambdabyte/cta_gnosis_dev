@@ -27,7 +27,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use another email address.')
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    entered_username = StringField('Username', validators=[DataRequired()])
+    entered_password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')

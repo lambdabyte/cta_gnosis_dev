@@ -5,17 +5,20 @@ from flask import Flask, jsonify
 from flask_restx import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
 
 # instantiate the users service
 app = Flask(__name__)
 
+# initalize api
 api = Api(app)
 
 # set config
 app.config.from_object(DevelopmentConfig)
 
+login = LoginManager(app)
 
-#  instantiate database check this Dam
+#  instantiate database
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
