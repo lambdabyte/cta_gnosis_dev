@@ -39,13 +39,15 @@
                         <!-- If user is logged in/out set url name -->
                         {% if current_user.is_anonymous %}
                             {% set register_status = 'register' %}
-                            {% set login_status = 'login' %}
+                            {% set register_text = 'register' %}
+                            {% set login_status = url_for('login') %}
                         {% else %}
-                            {% set register_status = '#' %}
-                            {% set login_status = 'logout' %}
+                            {% set register_status = url_for('user', username=current_user.username) %}
+                            {% set register_text = 'profile' %}
+                            {% set login_status = url_for('logout') %}
                         {% endif %}
                         <div class="dropdown-menu dropdown-menu-right">
-                          <a class="dropdown-item" href="{{ url_for(login_status) }}">{{ login_status }}</a>
+                          <a class="dropdown-item" href="{{ login_status }}">{{ login_status }}</a>
                           <a class="dropdown-item" href="{{ register_status }}">{{ register_status }}</a>
                         </div> 
                       </div>
