@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <table>
-        <tr valign="top">
-            <td><img src="{{ user.avatar(128) }}"></td>
-            <td><h1>User: {{ user.username }}</h1></td>
-        </tr>
-    </table>
-    <hr>
+
+<div class="container">
+    <div class="row">
+        <div class="col" id="profileAvatarColumn">
+            <img src="{{ user.avatar(128) }}"><br>
+            <h1 id="profileUsername">{{ user.username }}</h1>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
