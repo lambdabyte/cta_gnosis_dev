@@ -49,6 +49,18 @@ div#loginHeadBox {
     text-align: center;
 }
 
+/* Profile Page */
+#profileAvatarColumn {
+    text-align: center;
+    padding-top: 4rem;
+}
+
+h1#profileUsername {
+    width: fit-content;
+    margin: auto;
+    margin-top: 1rem;
+}
+
 @media only screen and (max-width: 768px) {
 
     div#register-container div.col {
@@ -61,7 +73,7 @@ div#loginHeadBox {
 
     .desktop-text {
         display: none;
-       }
-     }
+    }
+    
 
   }
