@@ -26,8 +26,12 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use another email address.')
 
+    def validate_entered_password(self, entered_password):
+        if len(entered_password.data) < 8 or any(str.isdigit(c) for c in entered_password.data) == False: 
+            raise ValidationError('Password must be 8 characters and contain one number.')
+
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    entered_username = StringField('Username', validators=[DataRequired()])
+    entered_password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
