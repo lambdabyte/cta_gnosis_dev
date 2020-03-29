@@ -14,7 +14,7 @@ def home():
 
 
 """
-User Views
+User Viewss
 """
 
 @app.route('/register', methods=['GET', 'POST'])
