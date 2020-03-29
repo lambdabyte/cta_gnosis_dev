@@ -61,6 +61,71 @@ h1#profileUsername {
     margin-top: 1rem;
 }
 
+/* Subject Page */
+#subjectContainer {
+    margin: auto;
+}
+
+#allSubjectsHead {
+    margin: auto;
+    margin-top: 6vh;
+}
+
+#subjectHeader {
+    width: 100%;
+    text-align: center;
+}
+
+#subjectCard {
+    padding: 1rem 1rem 1rem 1rem;
+}
+
+#subjectButtonRow {
+    margin: auto;
+    margin-bottom: 1rem;
+}
+
+#subjectControl {
+    padding: 1rem 0rem 0rem 1rem;
+}
+
+#subjectButtons {
+    padding: 1rem 1rem 0rem 1rem;
+}
+
+#subjectSearch {
+    width: 100%;
+}
+
+#newSubject, #filterSubject {
+    width: 48%;
+}
+
+@media only screen and (max-width: 991px) {
+    #subjectControl {
+        padding: 1rem 1rem 0rem 1rem;
+        text-align: center;
+        margin: auto;
+    }
+
+    #subjectSearch {
+        width: 100%;
+    }
+    
+    #subjectButtons {
+        text-align: center;
+        margin: auto;
+    }
+
+    #newSubject, #filterSubject {
+        width: 100%;
+    }  
+
+    #newSubject {
+        margin-top: 0.5rem;
+    }
+}
+
 @media only screen and (max-width: 768px) {
 
     div#register-container div.col {
@@ -74,6 +139,7 @@ h1#profileUsername {
     .desktop-text {
         display: none;
     }
+
     
 
   }
