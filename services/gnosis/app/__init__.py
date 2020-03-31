@@ -6,6 +6,7 @@ from flask_restx import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_login import login_required
 
 # instantiate the users service
 app = Flask(__name__)
@@ -17,6 +18,7 @@ api = Api(app)
 app.config.from_object(DevelopmentConfig)
 
 login = LoginManager(app)
+login.login_view = 'login'
 
 #  instantiate database
 db = SQLAlchemy(app)
