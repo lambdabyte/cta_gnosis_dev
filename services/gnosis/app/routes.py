@@ -14,7 +14,7 @@ def home():
 
 
 """
-User Views
+User Viewss
 """
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -87,6 +87,19 @@ def subjects():
     ]
     return render_template('subjects.html', subjects=subjects)
 
+@app.route('/subjects_api')
+def subjects_api():
+    return {
+        'python': {'color': 'red'},
+        'java': {'color': 'blue'},
+        'javascript': {'color': 'green'},
+        'elm': {'color': 'purple'},
+        'algorithms': {'color': 'orange'},
+        'discrete mathematics': {'color': 'yellow'},
+        'C++': {'color': 'amber'},
+        'Haskell': {'color': 'aqua'},
+        'Machine Learning': {'color': 'magenta'}
+        }
 
 class Ping(Resource):
     def get(self):

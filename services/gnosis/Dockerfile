@@ -10,7 +10,9 @@ RUN pip install --upgrade setuptools
 RUN apk update && \
     apk add --virtual build-deps && \
     apk add postgresql-dev gcc python3-dev musl-dev && \
-    apk add netcat-openbsd
+    apk add netcat-openbsd && \
+    apk add --update nodejs && \
+    apk add yarn
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
