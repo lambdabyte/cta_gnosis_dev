@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row" id="allSubjectsHead">
+        <h1 id="subjectHeader">{{ current_user.username }}'s Subjects</h1>
+    </div>
+    <div class="row" id="subjectButtonRow">
+        <div class="col-lg-10 col-md-10" id="subjectControl">
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="subjectSearch">
+        </div>
+        <div class="col-lg-2 col-md-2" id="subjectButtons">
+            <button class="btn btn-dark" id="filterSubject">Filter</button>
+            <button class="btn btn-dark" id="newSubject">New</button>
+        </div>
+    </div>
+    <div class="row" id="subjectContainer">
+        {% for subject in subjects %}
+            <div class="col-lg-4 col-md-6" id="subjectCard">
+                <a href="#" style="color: inherit;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ subject }}</h5>
+                            <p class="card-text">Stuff about the subject.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
