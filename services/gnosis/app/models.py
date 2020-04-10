@@ -7,6 +7,7 @@ from hashlib import md5
 usersubjects = db.Table('usersubjects',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('subject_id', db.Integer, db.ForeignKey('subject.id'), primary_key=True),
+    db.Column('subject_description', db.String(256)),
     db.Column('color', db.String(120))
 )
 

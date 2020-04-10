@@ -46,6 +46,11 @@
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Title:<span id="required-splat" style="color: red;">*</span></div>
                     <div class="col-sm-8">{{ form.title(class="form-control", size=26) }}</div>
                 </div>
+                <div class="row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Description:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.subject_description(class="form-control", size=26) }}</div>
+                </div>
             </div>
             <div class="modal-footer">
                 {{ form.submit(class="btn btn-outline-dark") }}
