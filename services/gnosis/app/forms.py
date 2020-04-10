@@ -38,4 +38,5 @@ class LoginForm(FlaskForm):
 
 class SubjectForm(FlaskForm):
     title = StringField('Title')
+    subject_description = StringField('Subject description')
     submit = SubmitField('Add')
