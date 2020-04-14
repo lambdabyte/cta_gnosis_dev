@@ -19,6 +19,7 @@ RUN pip install gunicorn
 COPY /app ./app
 COPY gnosis.py boot.sh ./
 RUN chmod +x boot.sh
+RUN chmod +x gnosis.py
 
 ENV FLASK_APP gnosis.py
 

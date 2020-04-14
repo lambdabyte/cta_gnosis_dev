@@ -1,12 +1,12 @@
 from app import app
 from app import db
-from app.models import User
-from app.forms import RegistrationForm, LoginForm
+from app.models import User, Subject, usersubjects
+from app.forms import RegistrationForm, LoginForm, SubjectForm
 from flask_restx import Resource
 from flask_login import current_user, login_user, logout_user, login_required
 from flask import render_template, flash, redirect, url_for, request
 from werkzeug.urls import url_parse
-
+from sqlalchemy.ext.associationproxy import association_proxy
 
 @app.route('/index')
 def home():
@@ -70,7 +70,7 @@ def user(username):
 Subject Views
 """
 
-@app.route('/subjects')
+@app.route('/subjects', methods=['GET', 'POST'])
 @login_required
 def subjects():
     # dummy data
@@ -85,7 +85,26 @@ def subjects():
         'Haskell',
         'Machine Learning'
     ]
-    return render_template('subjects.html', subjects=subjects)
+    form = SubjectForm()
+    if form.validate_on_submit():
+        user = current_user
+        subject = Subject(subject_name=form.title.data)
+        existant_subject = Subject.query.filter_by(subject_name=form.title.data).first()
+        if existant_subject:
+            db.engine.execute(
+                "INSERT INTO usersubjects " +
+                "VALUES (" + str(user.get_id()) + ", '" + str(existant_subject.id) + "', '" + form.subject_description.data + "', '2');"
+            )
+        else:
+            db.session.add(subject)
+            db.session.commit()
+            db.engine.execute(
+                "INSERT INTO usersubjects " +
+                "VALUES (" + str(user.get_id()) + ", " + str(subject.id) + ", '" + form.subject_description.data + "', '2');"
+            )
+            
+        return redirect(url_for('subjects'))
+    return render_template('subjects.html', subjects=subjects, form=form)
 
 @app.route('/subjects_api')
 def subjects_api():

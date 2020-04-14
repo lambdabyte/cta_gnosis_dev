@@ -35,3 +35,8 @@ class LoginForm(FlaskForm):
     entered_password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
+
+class SubjectForm(FlaskForm):
+    title = StringField('Title')
+    subject_description = StringField('Subject description')
+    submit = SubmitField('Add')

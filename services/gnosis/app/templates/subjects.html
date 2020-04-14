@@ -11,7 +11,7 @@
         </div>
         <div class="col-lg-2 col-md-2" id="subjectButtons">
             <button class="btn btn-dark" id="filterSubject">Filter</button>
-            <button class="btn btn-dark" id="newSubject">New</button>
+            <button class="btn btn-dark" id="newSubject" data-target="#myModal" data-toggle="modal">New</button>
         </div>
     </div>
     <div class="row" id="subjectContainer">
@@ -29,5 +29,37 @@
         {% endfor %}
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="myModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="" method="post" novalidate>
+            <div class="modal-body">
+                <div class="row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Title:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.title(class="form-control", size=26) }}</div>
+                </div>
+                <div class="row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Description:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.subject_description(class="form-control", size=26) }}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class="btn btn-outline-dark") }}
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+
 {% endblock %}
 
