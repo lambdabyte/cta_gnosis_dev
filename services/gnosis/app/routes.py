@@ -6,7 +6,7 @@ from flask_restx import Resource
 from flask_login import current_user, login_user, logout_user, login_required
 from flask import render_template, flash, redirect, url_for, request
 from werkzeug.urls import url_parse
-from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy import text
 
 @app.route('/index')
 def home():
@@ -90,17 +90,27 @@ def subjects():
         user = current_user
         subject = Subject(subject_name=form.title.data)
         existant_subject = Subject.query.filter_by(subject_name=form.title.data).first()
+        insert_statement = text(
+            "INSERT INTO usersubjects"
+                "VALUES (:user_id, :subject_id, :subject_description, :color);"
+            )
         if existant_subject:
             db.engine.execute(
-                "INSERT INTO usersubjects " +
-                "VALUES (" + str(user.get_id()) + ", '" + str(existant_subject.id) + "', '" + form.subject_description.data + "', '2');"
+                insert_statement, 
+                user_id=str(user.id),
+                subject_id=str(existant_subject.id), 
+                subject_description=form.subject_description.data,
+                color="2"
             )
         else:
             db.session.add(subject)
             db.session.commit()
             db.engine.execute(
-                "INSERT INTO usersubjects " +
-                "VALUES (" + str(user.get_id()) + ", " + str(subject.id) + ", '" + form.subject_description.data + "', '2');"
+                insert_statement, 
+                user_id=str(user.id),
+                subject_id=str(subject.id),
+                subject_description=form.subject_description.data,
+                color="2"
             )
             
         return redirect(url_for('subjects'))
