@@ -73,32 +73,21 @@ Subject Views
 @app.route('/subjects', methods=['GET', 'POST'])
 @login_required
 def subjects():
-    # dummy data
-    subjects = [
-        'python',
-        'java',
-        'javascript',
-        'elm',
-        'algorithms',
-        'discrete mathematics',
-        'C++',
-        'Haskell',
-        'Machine Learning'
-    ]
+    user = current_user
+    user_subjects =  user.subjects
     form = SubjectForm()
     if form.validate_on_submit():
-        user = current_user
         subject = Subject(subject_name=form.title.data)
         existant_subject = Subject.query.filter_by(subject_name=form.title.data).first()
         insert_statement = text(
-            "INSERT INTO usersubjects"
+            "INSERT INTO usersubjects "
                 "VALUES (:user_id, :subject_id, :subject_description, :color);"
             )
         if existant_subject:
             db.engine.execute(
                 insert_statement, 
-                user_id=str(user.id),
-                subject_id=str(existant_subject.id), 
+                user_id=user.id,
+                subject_id=existant_subject.id, 
                 subject_description=form.subject_description.data,
                 color="2"
             )
@@ -107,14 +96,14 @@ def subjects():
             db.session.commit()
             db.engine.execute(
                 insert_statement, 
-                user_id=str(user.id),
-                subject_id=str(subject.id),
+                user_id=user.id,
+                subject_id=subject.id,
                 subject_description=form.subject_description.data,
                 color="2"
             )
             
         return redirect(url_for('subjects'))
-    return render_template('subjects.html', subjects=subjects, form=form)
+    return render_template('subjects.html', subjects=user_subjects, form=form)
 
 @app.route('/subjects_api')
 def subjects_api():
