@@ -74,14 +74,23 @@ Subject Views
 @login_required
 def subjects():
     user = current_user
-    user_subjects =  user.subjects
+    subjects =  user.subjects
     form = SubjectForm()
+    user_subjects_select_sql = text(
+        ' SELECT subject_id, user_id, subject_description '
+        ' FROM usersubjects '
+        ' JOIN subject ON (subject.id = usersubjects.subject_id) '
+        ' JOIN "user" ON ("user".id = usersubjects.user_id) '
+        ' WHERE user_id = :userID'
+    )
+    user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
+    subject_descriptions = {row[0]:row[2] for row in user_subjects_query}
     if form.validate_on_submit():
         subject = Subject(subject_name=form.title.data)
         existant_subject = Subject.query.filter_by(subject_name=form.title.data).first()
         insert_statement = text(
             "INSERT INTO usersubjects "
-                "VALUES (:user_id, :subject_id, :subject_description, :color);"
+                "VALUES (:user_id, :subject_id, :color, :subject_description);"
             )
         if existant_subject:
             db.engine.execute(
@@ -103,7 +112,12 @@ def subjects():
             )
             
         return redirect(url_for('subjects'))
-    return render_template('subjects.html', subjects=user_subjects, form=form)
+    return render_template('subjects.html', subjects=subjects, form=form, subject_descriptions=subject_descriptions)
+
+@app.route('/subjects/delete_entry', methods=['POST'])
+@login_required
+def delete_entry():
+    subject_to_delete = [request.form['entry_id']]
 
 @app.route('/subjects_api')
 def subjects_api():

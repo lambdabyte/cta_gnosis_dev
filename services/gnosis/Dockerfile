@@ -28,4 +28,5 @@ RUN chown -R gnosis:gnosis ./
 USER gnosis
 
 EXPOSE 5000
+EXPOSE 5432
 ENTRYPOINT ["./boot.sh"]
