@@ -11,17 +11,18 @@
         </div>
         <div class="col-lg-2 col-md-2" id="subjectButtons">
             <button class="btn btn-dark" id="filterSubject">Filter</button>
-            <button class="btn btn-dark" id="newSubject" data-target="#myModal" data-toggle="modal">New</button>
+            <button class="btn btn-dark" id="newSubject" data-target="#newSubjectModal" data-toggle="modal">New</button>
         </div>
     </div>
     <div class="row" id="subjectContainer">
         {% for subject in subjects %}
             <div class="col-lg-4 col-md-6" id="subjectCard">
-                <a href="#" style="color: inherit;">
+                <a href="#" style="color: inherit;" data-target="#viewSubjectModal" data-toggle="modal">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ subject }}</h5>
-                            <p class="card-text">Stuff about the subject.</p>
+                            <h5 class="card-title">{{ subject.subject_name }}</h5>
+                            <p class="card-text">{{ subject_descriptions[subject.id] }}</p>
+                            <input type="hidden" id="subjectID" value="{{ subject.id }}">
                         </div>
                     </div>
                 </a>
@@ -30,23 +31,23 @@
     </div>
 </div>
 
-<div class="modal" tabindex="-1" role="dialog" id="myModal">
+<div class="modal" tabindex="-2" role="dialog" id="newSubjectModal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
+          <h5 class="modal-title">New Subject</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="" method="post" novalidate>
+        <form action="" method="post">
             <div class="modal-body">
-                <div class="row">
+                <div class="row" id="modal-row">
                     {{ form.hidden_tag() }}
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Title:<span id="required-splat" style="color: red;">*</span></div>
                     <div class="col-sm-8">{{ form.title(class="form-control", size=26) }}</div>
                 </div>
-                <div class="row">
+                <div class="row" id="modal-row">
                     {{ form.hidden_tag() }}
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Description:<span id="required-splat" style="color: red;">*</span></div>
                     <div class="col-sm-8">{{ form.subject_description(class="form-control", size=26) }}</div>
@@ -60,6 +61,59 @@
       </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="viewSubjectModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="" method="post">
+            <div class="modal-body">
+                <div class="row" id="modal-row">
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;">Title:</div>
+                    <div class="col-sm-8" id="subjectTitle"><input type="text" id="txtSubjectTitle" style="width: 80%;" disabled></div>
+                </div>
+                <div class="row" id="modal-row">
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;">Description:</div>
+                    <div class="col-sm-8" id="subjectDescription">
+                        <textarea id="txtArSubjectDescription" rows="4" style="width: 80%;" disabled></textarea>
+                    </div>
+                </div>
+                <div class="row" id="modal-row">
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;">Color:</div>
+                    <div class="col-sm-8" id="subjectColor"><input type="text" id="txtSubjectColor" style="width: 80%;" disabled></div>
+                </div>
+            </div>
+            <div class="modal-footer" >
+                <form action="{{ url_for('delete_entry') }}" method=post class=delete-entry></form>
+                    <button id="deleteSubject" type="button" class="btn btn-secondary" data-dismiss="modal" value="">Delete</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $("#viewSubjectModal").on('show.bs.modal', function (event) {
+            var subjectCard = $(event.relatedTarget);
+            var subjectTitle = subjectCard.find('.card-title').text();
+            var subjectID = subjectCard.find('#subjectID').val();
+            var subjectDescription = subjectCard.find('.card-text').text()
+            $('.modal-title').text(subjectTitle);
+            $('#txtSubjectTitle').val(subjectTitle);
+            $('#txtArSubjectDescription').val(subjectDescription);
+            $(this).find('#deleteSubject').val(subjectID);
+        });
+    });
+
+</script>
 
 {% endblock %}
 

@@ -8,6 +8,7 @@
     width: 98%;
 }
 
+
 /* Register */
 
 div#register-head-box {
@@ -99,6 +100,11 @@ h1#profileUsername {
 
 #newSubject, #filterSubject {
     width: 48%;
+}
+
+/* Modals */
+#modal-row {
+    margin-top: 1rem;
 }
 
 @media only screen and (max-width: 991px) {
