@@ -20,9 +20,10 @@
                 <a href="#" style="color: inherit;" data-target="#viewSubjectModal" data-toggle="modal">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ subject.subject_name }}</h5>
-                            <p class="card-text">{{ subject_descriptions[subject.id] }}</p>
+                            <h5 class="card-title"><i class="fas fa-circle" style="font-size: 12px; margin-right: 0.3rem; color: {{ subject_descriptions[subject.id]['color'] }};"></i>{{ subject.subject_name }}</h5>
+                            <p class="card-text">{{ subject_descriptions[subject.id]['description'] }}</p>
                             <input type="hidden" id="subjectID" value="{{ subject.id }}">
+                            <input type="hidden" id="cardSubjectColor" value ="{{ subject_descriptions[subject.id]['color'] }}">
                         </div>
                     </div>
                 </a>
@@ -35,7 +36,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">New Subject</h5>
+          <h5 class="new-sub-modal-title">New Subject</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -52,6 +53,11 @@
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Description:<span id="required-splat" style="color: red;">*</span></div>
                     <div class="col-sm-8">{{ form.subject_description(class="form-control", size=26) }}</div>
                 </div>
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Color:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.color(size=12) }}</div>
+                </div>
             </div>
             <div class="modal-footer">
                 {{ form.submit(class="btn btn-outline-dark") }}
@@ -67,34 +73,42 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title"></h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        
+            <button class="btn btn-outline-secondary" id="editSubject" style="margin-left: 1rem;"><i class="fas fa-pencil-alt"></i></button>
+            <button id="cancelEdit" class="btn btn-outline-secondary" style="display: none; margin-left: 1rem;"><i class="fas fa-times"></i></button>
+            
+        <form method="post" id="editSubjectForm" action="">
+            <button id="confirmEdit" class="btn btn-outline-secondary" style="display: none; margin-left: 1rem;"><i class="fas fa-check"></i></button>
+            <input type="hidden" value="" id="subjectToEdit" name="subjectid">
+            <input type="hidden" value="" id="subjectDescriptionToEdit" name="subjectdescription">
+            <input type="hidden" value="" id="subjectColorToEdit" name="subjectcolor">
+        </form>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="" method="post">
+
             <div class="modal-body">
-                <div class="row" id="modal-row">
-                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;">Title:</div>
-                    <div class="col-sm-8" id="subjectTitle"><input type="text" id="txtSubjectTitle" style="width: 80%;" disabled></div>
-                </div>
                 <div class="row" id="modal-row">
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;">Description:</div>
                     <div class="col-sm-8" id="subjectDescription">
-                        <textarea id="txtArSubjectDescription" rows="4" style="width: 80%;" disabled></textarea>
+                        <textarea id="txtArSubjectDescription" rows="4" style="width: 80%;" disabled name="subjectdescription"></textarea>
                     </div>
                 </div>
                 <div class="row" id="modal-row">
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;">Color:</div>
-                    <div class="col-sm-8" id="subjectColor"><input type="text" id="txtSubjectColor" style="width: 80%;" disabled></div>
+                    <div class="col-sm-8" id="subjectColor"><input type="color" id="txtSubjectColor" size="12" disabled name="subjectcolor"></div>
                 </div>
             </div>
             <div class="modal-footer" >
-                <form action="{{ url_for('delete_entry') }}" method=post class=delete-entry></form>
-                    <button id="deleteSubject" type="button" class="btn btn-secondary" data-dismiss="modal" value="">Delete</button>
+                <form action="{{ url_for('delete_subject') }}" method="post">
+                    <button id="deleteSubject" type="submit" class="btn btn-secondary">Delete</button>
+                    <input type="hidden" value="" id="subjectToDelete" name="subjectname">
+                
+                    <button type="button" id="subjectModalClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </form>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
-        </form>
+
       </div>
     </div>
 </div>
@@ -105,11 +119,39 @@
             var subjectCard = $(event.relatedTarget);
             var subjectTitle = subjectCard.find('.card-title').text();
             var subjectID = subjectCard.find('#subjectID').val();
-            var subjectDescription = subjectCard.find('.card-text').text()
+            var subjectColor = subjectCard.find("#cardSubjectColor").val();
+            var subjectDescription = subjectCard.find('.card-text').text();
             $('.modal-title').text(subjectTitle);
             $('#txtSubjectTitle').val(subjectTitle);
             $('#txtArSubjectDescription').val(subjectDescription);
-            $(this).find('#deleteSubject').val(subjectID);
+            $("#txtSubjectColor").val(subjectColor);
+            $('#subjectToDelete').val(subjectID);
+            $("#subjectToEdit").val(subjectID);
+            $("#subjectColorToEdit").val(subjectColor);
+        });
+
+        $("#editSubject").on('click', function (event) {
+            $("#cancelEdit").show();
+            $("#confirmEdit").show();
+            $("#txtArSubjectDescription").removeAttr('disabled');
+            $("#txtSubjectColor").removeAttr('disabled');
+        });
+
+        $("#subjectModalClose, #cancelEdit, .close").on('click', function (event) {
+            $("#cancelEdit").hide();
+            $("#confirmEdit").hide();
+            $("#editSubjectForm").removeAttr('action');
+            $("#editSubject").removeAttr('type');
+            $("#txtArSubjectDescription").prop("disabled", "true");
+            $("#txtSubjectColor").prop("disabled", "true");
+        });
+
+        $("#confirmEdit").on('click', function (event) {
+            var subjectDescriptionEdit = $("#txtArSubjectDescription").val();
+            var subjectColorEdit = $("#txtSubjectColor").val();
+            $("#subjectDescriptionToEdit").val(subjectDescriptionEdit);
+            $("#subjectColorToEdit").val(subjectColorEdit);
+            $("#editSubjectForm").attr('action', "{{ url_for('edit_subject') }}");
         });
     });
 

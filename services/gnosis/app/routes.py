@@ -77,16 +77,18 @@ def subjects():
     subjects =  user.subjects
     form = SubjectForm()
     user_subjects_select_sql = text(
-        ' SELECT subject_id, user_id, subject_description '
+        ' SELECT subject_id, user_id, subject_description, color '
         ' FROM usersubjects '
         ' JOIN subject ON (subject.id = usersubjects.subject_id) '
         ' JOIN "user" ON ("user".id = usersubjects.user_id) '
         ' WHERE user_id = :userID'
     )
     user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
-    subject_descriptions = {row[0]:row[2] for row in user_subjects_query}
+    subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
     if form.validate_on_submit():
         subject = Subject(subject_name=form.title.data)
+        i_color = form.color.data
+        i_color = i_color.hex_l
         existant_subject = Subject.query.filter_by(subject_name=form.title.data).first()
         insert_statement = text(
             "INSERT INTO usersubjects "
@@ -98,7 +100,7 @@ def subjects():
                 user_id=user.id,
                 subject_id=existant_subject.id, 
                 subject_description=form.subject_description.data,
-                color="2"
+                color=i_color
             )
         else:
             db.session.add(subject)
@@ -108,30 +110,60 @@ def subjects():
                 user_id=user.id,
                 subject_id=subject.id,
                 subject_description=form.subject_description.data,
-                color="2"
+                color=i_color
             )
             
         return redirect(url_for('subjects'))
     return render_template('subjects.html', subjects=subjects, form=form, subject_descriptions=subject_descriptions)
 
-@app.route('/subjects/delete_entry', methods=['POST'])
+@app.route('/delete_subject', methods=['POST'])
 @login_required
-def delete_entry():
-    subject_to_delete = [request.form['entry_id']]
+def delete_subject():
+    subject_to_delete = request.form['subjectname']
+    user_obj = User.query.filter_by(id=current_user.id).first()
+    subject_obj = Subject.query.filter_by(id=subject_to_delete).first()
+    user_obj.subjects.remove(subject_obj)
+    db.session.commit()
+    # Check if other users have subject before deleting from main subjects
+    user_subjects_check_sql = text(' SELECT subject_id FROM usersubjects WHERE subject_id = :subjectID ') 
+    user_subjects_check = db.engine.execute(user_subjects_check_sql, subjectID=subject_to_delete)
+    subject_has_other_users=False
+    for row in user_subjects_check:
+        if row[0] == int(subject_to_delete):
+            subject_has_other_users = True
+    if subject_has_other_users == False:
+        Subject.query.filter_by(id=subject_to_delete).delete()
+        db.session.commit()
+    return redirect(url_for('subjects'))
 
-@app.route('/subjects_api')
-def subjects_api():
-    return {
-        'python': {'color': 'red'},
-        'java': {'color': 'blue'},
-        'javascript': {'color': 'green'},
-        'elm': {'color': 'purple'},
-        'algorithms': {'color': 'orange'},
-        'discrete mathematics': {'color': 'yellow'},
-        'C++': {'color': 'amber'},
-        'Haskell': {'color': 'aqua'},
-        'Machine Learning': {'color': 'magenta'}
-        }
+@app.route('/edit_subject', methods=['POST'])
+@login_required
+def edit_subject():
+    subject_to_edit = request.form['subjectid']
+    subject_description = request.form['subjectdescription']
+    subject_color = request.form['subjectcolor']
+    update_user_subject_sql = text(
+        ' UPDATE usersubjects SET subject_description = :subject_description, color = :subject_color '
+        ' WHERE user_id = :user_id AND subject_id = :subject_id'
+    )
+    db.engine.execute(update_user_subject_sql, subject_description=subject_description, subject_color=str(subject_color), user_id=current_user.id, subject_id=int(subject_to_edit))
+    return redirect(url_for('subjects'))
+
+@app.route('/goals', methods=['GET', 'POST'])
+@login_required
+def goals():
+    user = current_user
+    subjects =  user.subjects
+    user_subjects_select_sql = text(
+        ' SELECT subject_id, user_id, subject_description, color '
+        ' FROM usersubjects '
+        ' JOIN subject ON (subject.id = usersubjects.subject_id) '
+        ' JOIN "user" ON ("user".id = usersubjects.user_id) '
+        ' WHERE user_id = :userID'
+    )
+    user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
+    subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
+    return render_template('goals.html', subjects=subjects, subject_descriptions=subject_descriptions)
 
 class Ping(Resource):
     def get(self):

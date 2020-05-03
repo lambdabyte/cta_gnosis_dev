@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div  class="container-fluid" style="height: 100vh;">
+    <div class="row" style="height: 100vh;">
+        
+        <div class="col-md-4" style="border-bottom: 1px solid grey; height: 70vh; padding-top: 1rem;">
+            <button type="button" id="reset" class="btn btn-secondary" style="float: right; margin-top: 1rem;">Reset</button>
+            {% for subject in subjects %}
+            <div class="col-lg-4 col-md-6 canvas2" id="subjectCard">
+                <div class="card create-flowy" id="{{ subject.subject_name }}" style="background-color: {{ subject_descriptions[subject.id]['color'] }};" data-status="listed">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ subject.subject_name }}</h5>
+                        <input type="hidden" id="subjectID" value="{{ subject.id }}">
+                        <input type="hidden" id="cardSubjectColor" value ="{{ subject_descriptions[subject.id]['color'] }}">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-8" style="border: 1px solid grey;"  id="canvas">
+  
+        </div>
+    </div>
+</div>
+          
+
+<script>
+    window.hiddenBlocks = [];
+    var spacing_x = 40;
+    var spacing_y = 100;
+    // Initialize Flowy
+    flowy(document.getElementById("canvas"), onGrab, onRelease, onSnap, onRearrange, spacing_x, spacing_y);
+    function onGrab(block){
+         
+    }
+    function onRelease(block){
+
+
+    }
+    function onSnap(block, first, parent){
+        // When a block snaps with another one
+        var listed_block_id = block.id;
+        var listed_block = document.getElementById(listed_block_id);
+
+        block.dataset.status = "snapped";
+        listed_block.style.display = "none";
+        window.hiddenBlocks.push(listed_block);
+        return true;
+    }
+    function onRearrange(block, parent){
+        // When a block is rearranged
+    }
+
+    var reset = document.getElementById("reset");
+
+    reset.addEventListener("click", function(){
+        for (var hidden_block of window.hiddenBlocks) {
+            flowy.deleteBlocks();
+            hidden_block.style.display = "block";
+        }
+    });
+
+</script>
+{% endblock %}
