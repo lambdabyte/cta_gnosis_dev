@@ -4,23 +4,33 @@
 <div  class="container-fluid" style="height: 100vh;">
     <div class="row" style="height: 100vh;">
         
-        <div class="col-md-4" style="border-bottom: 1px solid grey; height: 70vh; padding-top: 1rem;">
-            <button type="button" id="reset" class="btn btn-secondary" style="float: right; margin-top: 1rem;">Reset</button>
-            {% for subject in subjects %}
-            <div class="col-lg-4 col-md-6 canvas2" id="subjectCard">
-                <div class="card create-flowy" id="{{ subject.subject_name }}" style="background-color: {{ subject_descriptions[subject.id]['color'] }};" data-status="listed">
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">{{ subject.subject_name }}</h5>
-                        <input type="hidden" id="subjectID" value="{{ subject.id }}">
-                        <input type="hidden" id="cardSubjectColor" value ="{{ subject_descriptions[subject.id]['color'] }}">
+        <div class="col-md-4">
+                <h1 style="margin: 1rem 0rem">{{ current_user.username }}'s Subjects</h1>
+            <div id="subject-container" style="border: 1px solid grey; width: fit-content; padding: 1rem 1rem 1rem 1rem;">
+                
+                {% for subject in subjects %}
+                <div class="col-lg-4 col-md-6 canvas2" id="subjectCard">
+                    <div class="card create-flowy" id="{{ subject.subject_name }}" style="width: 400px;" data-status="listed">
+                        
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-circle" style="font-size: 12px; margin-right: 0.3rem; color: {{ subject_descriptions[subject.id]['color'] }};"></i>{{ subject.subject_name }}</h5>
+                            <p class="card-text">{{ subject_descriptions[subject.id]['description'] }}</p>
+                            <input type="hidden" id="subjectID" value="{{ subject.id }}">
+                            <input type="hidden" id="cardSubjectColor" value ="{{ subject_descriptions[subject.id]['color'] }}">
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-        <div class="col-md-8" style="border: 1px solid grey;"  id="canvas">
-  
+        <div class="col-md-8" style="padding: 1rem 1rem 1rem 1rem; height: 85vh;">
+            <div  id="canvas" style="border: 1px solid grey; width: 100%; height: 100%;">
+                
+            </div>
+            <div style="margin: 1rem 1rem 1rem 0rem; text-align: center;">
+                <button type="button" id="reset" class="btn btn-secondary" style="margin-right: 1rem; height: 3rem; width: 6rem; font-size: 18px; z-index: 2;">Reset</button>
+                <button type="button" id="save" class="btn btn-secondary" style="height: 3rem; width: 6rem; font-size: 18px;">Save</button>
+            </div>
         </div>
     </div>
 </div>
@@ -28,14 +38,15 @@
 
 <script>
     window.hiddenBlocks = [];
+    window.snappedBlocks = [];
     var spacing_x = 40;
     var spacing_y = 100;
     // Initialize Flowy
     flowy(document.getElementById("canvas"), onGrab, onRelease, onSnap, onRearrange, spacing_x, spacing_y);
     function onGrab(block){
-         
+        
     }
-    function onRelease(block){
+    function onRelease(){
 
 
     }
@@ -44,13 +55,16 @@
         var listed_block_id = block.id;
         var listed_block = document.getElementById(listed_block_id);
 
-        block.dataset.status = "snapped";
+        listed_block.dataset.status = "snapped";
         listed_block.style.display = "none";
         window.hiddenBlocks.push(listed_block);
+        window.snappedBlocks.push(block);
         return true;
     }
     function onRearrange(block, parent){
         // When a block is rearranged
+        
+        return true;
     }
 
     var reset = document.getElementById("reset");
@@ -60,6 +74,15 @@
             flowy.deleteBlocks();
             hidden_block.style.display = "block";
         }
+    });
+
+    var save = document.getElementById("save");
+
+    save.addEventListener("click", function() {
+        // As an object
+        flowy.output();
+        // As a JSON string
+        JSON.stringify(flowy.output());
     });
 
 </script>
