@@ -1,10 +1,11 @@
 from app import app
 from app import db
+import os
 from app.models import User, Subject, usersubjects
 from app.forms import RegistrationForm, LoginForm, SubjectForm
 from flask_restx import Resource
 from flask_login import current_user, login_user, logout_user, login_required
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, json
 from werkzeug.urls import url_parse
 from sqlalchemy import text
 
@@ -154,6 +155,13 @@ def edit_subject():
 def goals():
     user = current_user
     subjects =  user.subjects
+    data = ""
+    directory = '/home/gnosis/services/gnosis/app/json/'
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        id_test = filename.split('-')
+        if int(id_test[0]) == current_user.id:
+            data = json.load(open(os.path.join(directory, filename)))
     user_subjects_select_sql = text(
         ' SELECT subject_id, user_id, subject_description, color '
         ' FROM usersubjects '
@@ -163,7 +171,17 @@ def goals():
     )
     user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
     subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
-    return render_template('goals.html', subjects=subjects, subject_descriptions=subject_descriptions)
+    return render_template('goals.html', subjects=subjects, subject_descriptions=subject_descriptions, data=data)
+
+@app.route('/save_graph', methods=['POST'])
+@login_required
+def save_graph():
+    graph = request.form['jsonsubmit']
+    plan_name = str(current_user.id) + '-' + request.form['plan_name']
+    file_name = '/home/gnosis/services/gnosis/app/json/' + plan_name + '-graph.json'
+    with open(file_name, 'w') as f:
+        json.dump(graph, f)
+    return redirect(url_for('goals'))
 
 class Ping(Resource):
     def get(self):

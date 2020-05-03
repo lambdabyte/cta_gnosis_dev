@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField
 from wtforms_components import ColorField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models import User
@@ -42,4 +42,5 @@ class SubjectForm(FlaskForm):
     subject_description = StringField('Subject description', validators=[DataRequired()])
     color = ColorField(default='#0000FF', validators=[DataRequired()])
     submit = SubmitField('Add')
+
     

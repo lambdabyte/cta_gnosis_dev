@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div  class="container-fluid" style="height: 100vh;">
     <div class="row" style="height: 100vh;">
         
-        <div class="col-md-4">
+        <div class="col-lg-3">
                 <h1 style="margin: 1rem 0rem">{{ current_user.username }}'s Subjects</h1>
-            <div id="subject-container" style="border: 1px solid grey; width: fit-content; padding: 1rem 1rem 1rem 1rem;">
+            <div id="subject-container" style="border: 1px solid grey; width: fit-content; padding: 1rem 1rem 1rem 1rem; min-width: 366px;">
                 
                 {% for subject in subjects %}
-                <div class="col-lg-4 col-md-6 canvas2" id="subjectCard">
-                    <div class="card create-flowy" id="{{ subject.subject_name }}" style="width: 400px;" data-status="listed">
+                <div id="subjectCard">
+                    <div class="card create-flowy" id="{{ subject.subject_name }}" style="width: 300px;" data-status="listed">
                         
                         <div class="card-body">
                             <h5 class="card-title"><i class="fas fa-circle" style="font-size: 12px; margin-right: 0.3rem; color: {{ subject_descriptions[subject.id]['color'] }};"></i>{{ subject.subject_name }}</h5>
@@ -23,24 +24,53 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="col-md-8" style="padding: 1rem 1rem 1rem 1rem; height: 85vh;">
+        <div class="col-lg-9" style="padding: 1rem 1rem 1rem 1rem; height: 85vh;">
             <div  id="canvas" style="border: 1px solid grey; width: 100%; height: 100%;">
                 
             </div>
-            <div style="margin: 1rem 1rem 1rem 0rem; text-align: center;">
-                <button type="button" id="reset" class="btn btn-secondary" style="margin-right: 1rem; height: 3rem; width: 6rem; font-size: 18px; z-index: 2;">Reset</button>
-                <button type="button" id="save" class="btn btn-secondary" style="height: 3rem; width: 6rem; font-size: 18px;">Save</button>
+            <div style="margin: 1rem 1rem 1rem 0rem; text-align: center;">           
+                <button type="button" id="reset" class="btn btn-danger" style="margin-right: 1rem; height: 3rem; width: 6rem; font-size: 18px; z-index: 2;">Reset</button>
+                <button type="button" id="load" class="btn btn-secondary" style="margin-right: 1rem; height: 3rem; width: 6rem; font-size: 18px; z-index: 2;">Load</button>
+                <button type="submit" id="saveOpen" class="btn btn-secondary" style="height: 3rem; width: 6rem; font-size: 18px;"  data-toggle="modal" data-target="#saveModal">Save</button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="" method="post" id="saveGraphForm">
+            <div class="modal-body">
+                <div  class="row" id="modal-row">
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;"><label for="plan-name">Plan Name:</label><span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8"><input type="text" class="form-control" name="plan_name"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" id="save" class="btn btn-success" data-toggle="modal" data-target="#saveModal">Save</button>
+                <input type="hidden" id="json_submit" name="jsonsubmit" value="">
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
           
 
-<script>
+<script type="text/javascript">
     window.hiddenBlocks = [];
     window.snappedBlocks = [];
-    var spacing_x = 40;
-    var spacing_y = 100;
+    window.relationships = {};
+    var spacing_x = 60;
+    var spacing_y = 120;
     // Initialize Flowy
     flowy(document.getElementById("canvas"), onGrab, onRelease, onSnap, onRearrange, spacing_x, spacing_y);
     function onGrab(block){
@@ -48,13 +78,15 @@
     }
     function onRelease(){
 
-
     }
     function onSnap(block, first, parent){
         // When a block snaps with another one
         var listed_block_id = block.id;
         var listed_block = document.getElementById(listed_block_id);
-
+        if (parent) {
+            parent.attr;
+        }
+        
         listed_block.dataset.status = "snapped";
         listed_block.style.display = "none";
         window.hiddenBlocks.push(listed_block);
@@ -63,7 +95,6 @@
     }
     function onRearrange(block, parent){
         // When a block is rearranged
-        
         return true;
     }
 
@@ -71,18 +102,31 @@
 
     reset.addEventListener("click", function(){
         for (var hidden_block of window.hiddenBlocks) {
-            flowy.deleteBlocks();
             hidden_block.style.display = "block";
         }
+        flowy.deleteBlocks();
     });
 
+    var load = document.getElementById("load");
     var save = document.getElementById("save");
+    
+
+    load.addEventListener("click", function() {
+        var canvas_element = document.getElementById("canvas");
+
+        var data = '{{ data | tojson }}';
+        var slic_data = data.slice(1, -1);
+        var package = JSON.parse(slic_data);
+        canvas_element.innerHTML = package["html"];
+        flowy.import(package);
+    });
 
     save.addEventListener("click", function() {
-        // As an object
-        flowy.output();
+        var data_input = document.getElementById("json_submit");
         // As a JSON string
-        JSON.stringify(flowy.output());
+        var chart_data = JSON.stringify(flowy.output());
+        data_input.value = chart_data;
+        $("#saveGraphForm").attr('action', "{{ url_for('save_graph') }}");
     });
 
 </script>
