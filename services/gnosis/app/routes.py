@@ -260,14 +260,25 @@ def add_task():
 @login_required
 def notebook():
     if request.method == 'POST':
-        note = request.form['newnote']
-        note_subject = request.form['notesubject']
-        notebook_name = str(current_user.id) + '-' + note_subject
-        folder_name = '/home/gnosis/services/gnosis/app/notebooks/' + notebook_name + '/'
-        if os.path.exists(folder_name) == False:
-            os.mkdir(folder_name)
-        filename = folder_name + str(current_user.id) + '-' + note
-        open(filename, "w")
+        if request.form['notepad']:
+            notepad_write = str(current_user.id) + '-' + request.form['notepadhead']
+            notepad_sub = str(current_user.id) + '-' + request.form['notepadsub']
+            notepad = request.form['notepad']
+            whole_path = '/home/gnosis/services/gnosis/app/notebooks/' + notepad_sub + '/' + notepad_write
+            text_file = open(whole_path, "w")
+            n = text_file.write(notepad)
+            text_file.close()
+        elif request.form['newnote']:
+            note = request.form['newnote']
+            note_subject = request.form['notesubject']
+            notebook_name = str(current_user.id) + '-' + note_subject
+            folder_name = '/home/gnosis/services/gnosis/app/notebooks/' + notebook_name + '/'
+            if os.path.exists(folder_name) == False:
+                os.mkdir(folder_name)
+            filename = folder_name + str(current_user.id) + '-' + note
+            open(filename, "w")
+       
+
     notes = []
     order = {}
     parent_dir = '/home/gnosis/services/gnosis/app/notebooks/'
@@ -299,6 +310,19 @@ def notebook():
     subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
     return render_template('notebook.html', subjects=subjects, subject_descriptions=subject_descriptions, note_titles=test_notes, notes=notes, order=order)
 
+
+@app.route('/get_notes', methods=['GET', 'POST'])
+@login_required
+def get_notes():
+    note = request.args.get('note', 0, type=str)
+    subject = request.args.get('sub', 0, type=str)
+    notes = []
+    order = {}
+    parent_dir = '/home/gnosis/services/gnosis/app/notebooks/' + str(current_user.id) + '-' + subject + '/' + str(current_user.id) + '-' + note
+    with open(parent_dir, 'r') as file:
+        data = file.read().replace('\n', '')
+    order = {'note': data}
+    return jsonify(result=order)
 
 class Ping(Resource):
     def get(self):
