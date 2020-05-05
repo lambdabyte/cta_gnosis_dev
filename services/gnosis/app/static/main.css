@@ -166,7 +166,7 @@ h1#profileUsername {
 }
 
 #noteBox {
-    border: 1px solid grey;
+    border: 1px solid  rgba(153, 153, 153, 0.644);;
     height: 100%;
     margin: auto;
     font-family: Arial, Helvetica, sans-serif;
@@ -178,6 +178,28 @@ h1#profileUsername {
 }
 
 .note-block {
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+textarea {
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none; /*remove the resize handle on the bottom right*/
+}
+
+#doc-pad {
+    box-shadow: 0 1px 1px rgba(0,0,0,0.12), 
+              0 2px 2px rgba(0,0,0,0.12), 
+              0 4px 4px rgba(0,0,0,0.12), 
+              0 8px 8px rgba(0,0,0,0.12),
+              0 16px 16px rgba(0,0,0,0.12);
+    max-height: 1200px;
     font-family: "Lucida Console", Monaco, monospace;
 }
 
