@@ -269,18 +269,22 @@ def notebook():
         filename = folder_name + str(current_user.id) + '-' + note
         open(filename, "w")
     notes = []
+    order = {}
     parent_dir = '/home/gnosis/services/gnosis/app/notebooks/'
     note_filenames= os.listdir(parent_dir)
     for note_file in note_filenames: # loop through all the files and folders
         note_filename = os.path.basename(note_file)
         note_file_test = note_filename.split('-')
-        full_path = parent_dir + note_filename;
-        note_files = os.listdir(full_path)
-        for note in note_files:
-            notename = os.fsdecode(note)
-            note_test = notename.split('-')
-            notes.append({'subject': note_file_test[1], 'note': note_test[1]})
-
+        if note_file_test[0] == str(current_user.id):
+            order[note_file_test[1]] = []
+            full_path = parent_dir + note_filename;
+            note_files = os.listdir(full_path)
+            for note in note_files:
+                notename = os.fsdecode(note)
+                note_test = notename.split('-')
+                order[note_file_test[1]].append(note_test[1])
+                notes.append({'subject': note_file_test[1], 'note': note_test[1]})
+    order = json.dumps(order)
     user = current_user
     subjects =  user.subjects    
     user_subjects_select_sql = text(
@@ -293,7 +297,7 @@ def notebook():
     test_notes = ['note', 'two', 'three', 'notefour']
     user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
     subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
-    return render_template('notebook.html', subjects=subjects, subject_descriptions=subject_descriptions, note_titles=test_notes, notes=notes)
+    return render_template('notebook.html', subjects=subjects, subject_descriptions=subject_descriptions, note_titles=test_notes, notes=notes, order=order)
 
 
 class Ping(Resource):

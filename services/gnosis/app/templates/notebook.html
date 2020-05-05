@@ -22,7 +22,7 @@
                             {% for note in notes %}
 
                                     {% if note['subject'] == subject.subject_name %}
-                                        <li><a href="#" class="search-note" data-parent="{{ note['subject'] }}">{{ note['note'] }}</a></li>
+                                        <li><a href="#" class="search-note under-note" data-parent="{{ subject.subject_name }}" data-self="{{ note['note'] }}" id="{{ note['note'] }}">{{ note['note'] }}</a></li>
                                     {% endif %}
 
                             {% endfor %}
@@ -42,7 +42,6 @@
 
 var add_buttons = document.getElementsByClassName("addNote");
 var titles = document.getElementsByClassName("search-note");
-var sub_notes = document.getElementsByClassName("sub-search-note");
 var inputs = document.getElementsByClassName("new-note-list");
 var confirms = document.getElementsByClassName("confirm-add");
 
@@ -77,20 +76,24 @@ function myFunction() {
     input = document.getElementById("myInput");
     filter = input.value.toUpperCase();
     titles = document.getElementsByClassName("search-note");
-    sub_notes = document.getElementsByClassName("sub-search-note");
-    
+    subnotes = document.getElementsByClassName("under-note");
+    order = '{{ order | tojson | safe }}';
+    order = order.slice(1, -1);
+    order = JSON.parse(order);
+
     var split_input = filter.split(" ");
     const options = {
         includeScore: true
       }
     const fuse = new Fuse(split_input, options);
+    
     // Loop through all table rows, and hide those who don't match the search query
     for (i = 0; i < titles.length; i++) {
         var current_title = titles[i];
         var title_text = current_title.textContent.toUpperCase();
         const result = fuse.search(title_text);
-        
     }
+
     for (i = 0; i < titles.length; i++) {
         td = titles[i];
         if (td) {
@@ -104,8 +107,22 @@ function myFunction() {
                     document.getElementById(td.dataset.parent).parentNode.style.display = "";
                 }    
             } else {
+                if (split_input.length <= 1) {
                     td.style.display = "none";
                     td.parentNode.style.display = "none";
+                    if (td.dataset.parent) {
+                        if (document.getElementById(td.dataset.parent).style.display != "none") {
+                            for (var note of order[td.dataset.parent]) {
+                                if (note.toUpperCase().indexOf(filter) > -1) {
+                                    document.getElementById(note).style.display = "";
+                                    document.getElementById(note).parentNode.style.display = "";
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                
             }
         }
     }
