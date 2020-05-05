@@ -14,6 +14,10 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/health_check')
+def health_check():
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 """
 User Viewss
 """

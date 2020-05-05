@@ -12,7 +12,7 @@
                 </div>
                 {% for subject in subjects %}
                 <div class="subject-block">
-                    <h2>{{ subject.subject_name }}</h2>
+                    <div class="row"><h2>{{ subject.subject_name }}<a href="#" style="color: black;"></h2><span style="margin-left: 4px;"><i class="fas fa-plus"></i></a></span></div>
                     <div class="note-block">
                         <ul>
                         {% for note_title in note_titles %}
