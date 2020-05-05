@@ -7,16 +7,16 @@
         <div class="col-lg-12" id="note-col">
             <h1 style="text-align: center; margin: 1rem 0rem">Notebooks</h1>
             <div id="noteBox">
-                <div style="text-align: center;" id="subjectControl">
-                    <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="subjectSearch" style="width: 60%; margin: auto;">
+                <div style="text-align: center;" id="subjectControl" class="row" style="width: fit-content; margin: auto;">
+                    <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="myInput" onkeyup="myFunction()" style="width: 60%; margin: auto;"><span style="left: 0;">
                 </div>
                 {% for subject in subjects %}
                 <div class="subject-block">
-                    <div class="row"><h2>{{ subject.subject_name }}<a href="#" style="color: black;"></h2><span style="margin-left: 4px;"><i class="fas fa-plus"></i></a></span></div>
+                    <div class="row"><h2 class="search-note">{{ subject.subject_name }}<a href="#" style="color: black;" class="addNote"></h2><span style="margin-left: 4px;"><i class="fas fa-plus"></i></a></span></div>
                     <div class="note-block">
                         <ul>
                         {% for note_title in note_titles %}
-                            <li><a href="#">{{ note_title }}</a></li>
+                            <li><a href="#" class="search-note">{{ note_title }}</a></li>
                         {% endfor %}
                         </ul>
                     </div>
@@ -30,6 +30,28 @@
 
 
 <script type="text/javascript">
+function myFunction() {   
+    // Declare variables
+    var input, filter, titles, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    titles = document.getElementsByClassName("search-note");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < titles.length; i++) {
+        td = titles[i];
+        if (td) {
+            txtValue = td.textContent;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                td.style.display = "";
+                td.parentNode.style.display = "";
+            } else {
+                td.style.display = "none";
+                td.parentNode.style.display = "none";
+            }
+        }
+    }
+}
 
 </script>
 {% endblock %}
