@@ -8,6 +8,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flask import render_template, flash, redirect, url_for, request, json, jsonify
 from werkzeug.urls import url_parse
 from sqlalchemy import text
+import base64
 
 @app.route('/index')
 def home():
@@ -164,9 +165,12 @@ def goals():
     graph_loaded = ""
     directory = '/home/gnosis/services/gnosis/app/json/'
     if request.method == 'POST':
-        if request.form['fileload']:
-            load_graph = request.form['fileload']
-            graph_loaded = json.load(open(os.path.join(directory, load_graph)))
+        try:
+            if request.form['fileload']:
+                load_graph = request.form['fileload']
+                graph_loaded = json.load(open(os.path.join(directory, load_graph)))
+        except KeyError:
+            pass
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         id_test = filename.split('-')
@@ -255,6 +259,28 @@ def add_task():
 @app.route('/notebook', methods=['GET', 'POST'])
 @login_required
 def notebook():
+    if request.method == 'POST':
+        note = request.form['newnote']
+        note_subject = request.form['notesubject']
+        notebook_name = str(current_user.id) + '-' + note_subject
+        folder_name = '/home/gnosis/services/gnosis/app/notebooks/' + notebook_name + '/'
+        if os.path.exists(folder_name) == False:
+            os.mkdir(folder_name)
+        filename = folder_name + str(current_user.id) + '-' + note
+        open(filename, "w")
+    notes = []
+    parent_dir = '/home/gnosis/services/gnosis/app/notebooks/'
+    note_filenames= os.listdir(parent_dir)
+    for note_file in note_filenames: # loop through all the files and folders
+        note_filename = os.path.basename(note_file)
+        note_file_test = note_filename.split('-')
+        full_path = parent_dir + note_filename;
+        note_files = os.listdir(full_path)
+        for note in note_files:
+            notename = os.fsdecode(note)
+            note_test = notename.split('-')
+            notes.append({'subject': note_file_test[1], 'note': note_test[1]})
+
     user = current_user
     subjects =  user.subjects    
     user_subjects_select_sql = text(
@@ -264,10 +290,11 @@ def notebook():
         ' JOIN "user" ON ("user".id = usersubjects.user_id) '
         ' WHERE user_id = :userID'
     )
-    test_notes = ['note one', 'note two', 'note three', 'note one million']
+    test_notes = ['note', 'two', 'three', 'notefour']
     user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
     subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
-    return render_template('notebook.html', subjects=subjects, subject_descriptions=subject_descriptions, note_titles=test_notes)
+    return render_template('notebook.html', subjects=subjects, subject_descriptions=subject_descriptions, note_titles=test_notes, notes=notes)
+
 
 class Ping(Resource):
     def get(self):

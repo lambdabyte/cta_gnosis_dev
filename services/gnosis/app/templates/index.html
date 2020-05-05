@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Welcome to Gnosis
-        {% if current_user.username is defined  %},
-         {{ current_user.username }}.
-        {% endif %}
-          Site under construction.</h1>
+    <div style="height: 80vh; width: 100vw; margin: auto; display:flex; align-items: center;" id="billboard">
+      <div id="overlay">
+        
+        <h1 class="text-dark" id="frontTitle" style="opacity: 1;">Gnosis</h1>
+
+      </div>
+      
+    </div>
 {% endblock %}

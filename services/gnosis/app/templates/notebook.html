@@ -10,17 +10,26 @@
                 <div style="text-align: center;" id="subjectControl" class="row" style="width: fit-content; margin: auto;">
                     <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="myInput" onkeyup="myFunction()" style="width: 60%; margin: auto;"><span style="left: 0;">
                 </div>
+                
                 {% for subject in subjects %}
+                <form action="{{ url_for('notebook') }}" method="post" id="addNoteForm">
+                <input type="hidden" name="notesubject" value="{{ subject.subject_name }}">
                 <div class="subject-block">
-                    <div class="row"><h2 class="search-note">{{ subject.subject_name }}<a href="#" style="color: black;" class="addNote"></h2><span style="margin-left: 4px;"><i class="fas fa-plus"></i></a></span></div>
+                    <div class="row"><h2 class="search-note" data-self="{{ subject.subject_name }}" id="{{ subject.subject_name }}">{{ subject.subject_name }}</h2><span style="margin-left: 4px;"></span><a data-self="{{ subject.subject_name }}" data-status="closed" style="color: black;" class="addNote"><i class="fas fa-plus"></i></a></span></div>
                     <div class="note-block">
-                        <ul>
-                        {% for note_title in note_titles %}
-                            <li><a href="#" class="search-note">{{ note_title }}</a></li>
-                        {% endfor %}
+                        <ul class="subject-notes" data-subject="{{ subject.subject_name }}">
+                            <li style="display: none;" class="new-note-list" data-subject="{{ subject.subject_name }}"><div class="row" style="display: flex; align-items: center;"><input type="text" name="newnote" id="newNote" class="form-control col-sm-2"><button type="submit" class="btn btn-success confirm-add" style="margin-left: 4px;" data-subject="{{ subject.subject_name }}" data-subjectid="{{ subject.id }}"><i class="fas fa-check" style="font-size: 20px; color:white; padding: -1rem;"></i></button></div></li>
+                            {% for note in notes %}
+
+                                    {% if note['subject'] == subject.subject_name %}
+                                        <li><a href="#" class="search-note" data-parent="{{ note['subject'] }}">{{ note['note'] }}</a></li>
+                                    {% endif %}
+
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
+            </form>
                 {% endfor %}
 
             </div>
@@ -30,27 +39,77 @@
 
 
 <script type="text/javascript">
+
+var add_buttons = document.getElementsByClassName("addNote");
+var titles = document.getElementsByClassName("search-note");
+var sub_notes = document.getElementsByClassName("sub-search-note");
+var inputs = document.getElementsByClassName("new-note-list");
+var confirms = document.getElementsByClassName("confirm-add");
+
+for (button of add_buttons) {
+    button.addEventListener("click", function() {
+        if (this.dataset.status == 'closed') {
+            for (input of inputs) {
+                if (input.dataset.subject==this.dataset.self) {
+                    input.style.display = "block";
+                    this.innerHTML = '<i class="fas fa-minus"></i>';
+                    this.dataset.status = 'open';
+                    window.note = input.childNodes[0].childNodes[0];
+                }
+            }
+        } else if (this.dataset.status == 'open') {
+            for (input of inputs) {
+                if (input.dataset.subject==this.dataset.self) {
+                    input.style.display = "none";
+                    this.innerHTML = '<i class="fas fa-plus"></i>';
+                    this.dataset.status = 'closed';
+                }
+            }
+        }
+
+    })
+}
+
 function myFunction() {   
     // Declare variables
+    
     var input, filter, titles, i, txtValue;
     input = document.getElementById("myInput");
     filter = input.value.toUpperCase();
     titles = document.getElementsByClassName("search-note");
-
+    sub_notes = document.getElementsByClassName("sub-search-note");
+    
+    var split_input = filter.split(" ");
+    const options = {
+        includeScore: true
+      }
+    const fuse = new Fuse(split_input, options);
     // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < titles.length; i++) {
+        var current_title = titles[i];
+        var title_text = current_title.textContent.toUpperCase();
+        const result = fuse.search(title_text);
+        
+    }
     for (i = 0; i < titles.length; i++) {
         td = titles[i];
         if (td) {
             txtValue = td.textContent;
+            var text_split = txtValue.split(" ");
             if (txtValue.toUpperCase().indexOf(filter) > -1) {
                 td.style.display = "";
                 td.parentNode.style.display = "";
+                if (td.dataset.parent) {
+                    document.getElementById(td.dataset.parent).style.display = "";
+                    document.getElementById(td.dataset.parent).parentNode.style.display = "";
+                }    
             } else {
-                td.style.display = "none";
-                td.parentNode.style.display = "none";
+                    td.style.display = "none";
+                    td.parentNode.style.display = "none";
             }
         }
     }
+    
 }
 
 </script>
