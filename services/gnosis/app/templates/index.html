@@ -9,7 +9,16 @@
       </div>
       
     </div>
-    <div style="width: 100vw; height: 40vh; border: 1px solid grey">
-
+    <div class="bg-dark" style="width: 100vw; height: 100vh; padding: 8rem 10rem 0rem 10rem;">
+      <h2 class="text-light" style="text-align: center;">Recent User Activity</h2>
+      <div class="row" style="margin-bottom: 4rem; text-align:center;">
+        
+        {% for user in users %}
+        <div class="col-lg-4">
+            <img src="{{ user.avatar(120) }}" style="margin-top: 2rem;"><br>
+            <h3 id="profileUsername" class="text-light">{{ user.username }}</h3>
+          </div>
+        {% endfor %}
+      </div>
     </div>
 {% endblock %}

@@ -7,16 +7,15 @@
     </div>
     <div class="row" id="subjectButtonRow">
         <div class="col-lg-10 col-md-10" id="subjectControl">
-            <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="subjectSearch">
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="myInput" onkeyup="myFunction()">
         </div>
         <div class="col-lg-2 col-md-2" id="subjectButtons">
-            <button class="btn btn-dark" id="filterSubject">Filter</button>
             <button class="btn btn-dark" id="newSubject" data-target="#newSubjectModal" data-toggle="modal">New</button>
         </div>
     </div>
     <div class="row" id="subjectContainer">
         {% for subject in subjects %}
-            <div class="col-lg-4 col-md-6" id="subjectCard">
+            <div class="col-lg-4 col-md-6 card-holder" id="subjectCard" data-self="{{ subject.subject_name }}">
                 <a href="#" style="color: inherit;" data-target="#viewSubjectModal" data-toggle="modal">
                     <div class="card">
                         <div class="card-body">
@@ -114,6 +113,27 @@
 </div>
 
 <script>
+    
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        td = document.getElementsByClassName("card-holder");
+      
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < td.length; i++) {
+          if (td[i]) {
+            txtValue = td[i].dataset.self;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              td[i].style.display = "";
+            } else {
+              td[i].style.display = "none";
+            }
+          }
+        }
+      }
+
     $(document).ready(function(){
         $("#viewSubjectModal").on('show.bs.modal', function (event) {
             var subjectCard = $(event.relatedTarget);

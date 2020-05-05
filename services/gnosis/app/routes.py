@@ -12,7 +12,8 @@ import base64
 
 @app.route('/index')
 def home():
-    return render_template('index.html')
+    users = User.query.all()
+    return render_template('index.html', users=users)
 
 
 @app.route('/health_check')
@@ -69,7 +70,8 @@ def logout():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', user=user)
+    subjects =  user.subjects
+    return render_template('user.html', user=user, subjects=subjects)
 
 
 """

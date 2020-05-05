@@ -20,8 +20,8 @@
                     <div class="row"><h2 class="search-note" data-self="{{ subject.subject_name }}" id="{{ subject.subject_name }}" data-status="parent">{{ subject.subject_name }}</h2><span style="margin-left: 4px;"></span><a data-self="{{ subject.subject_name }}" data-status="closed" style="color: black;" class="addNote"><i class="fas fa-plus"></i></a></span></div>
                     <div class="note-block">
                         <ul class="subject-notes" data-subject="{{ subject.subject_name }}">
-                            <li style="display: none;" class="new-note-list" data-subject="{{ subject.subject_name }}"><div class="row" style="display: flex; align-items: center;"><input type="text"   oninvalid="this.setCustomValidity('no spaces')"
-                                oninput="this.setCustomValidity('')"  name="newnote" id="newNote" class="form-control col-sm-2" pattern="[^' ']+"><button type="submit" class="btn btn-success confirm-add" style="margin-left: 4px;" data-subject="{{ subject.subject_name }}" data-subjectid="{{ subject.id }}"><i class="fas fa-check" style="font-size: 20px; color:white; padding: -1rem;"></i></button></div></li>
+                            <li style="display: none; width: 100%;" class="new-note-list" data-subject="{{ subject.subject_name }}"><div class="row" style="display: flex; align-items: center;"><input type="text"  oninvalid="this.setCustomValidity('no spaces')"
+                                oninput="this.setCustomValidity('')"  name="newnote" id="newNote" class="form-control col-sm-8" pattern="[^' ']+"><button type="submit" class="btn btn-success confirm-add" style="margin-left: 4px;" data-subject="{{ subject.subject_name }}" data-subjectid="{{ subject.id }}"><i class="fas fa-check" style="font-size: 14px; color:white; padding: -1rem;"></i></button></div></li>
                             {% for note in notes %}
 
                                     {% if note['subject'] == subject.subject_name %}
@@ -52,7 +52,6 @@
             <div class="col-md-3" style="padding: 0rem 1rem 0rem 1rem;">
                 <button type="submit" id="saveOpen" class="btn btn-success" style="margin-top: 2rem; height: 3rem; width: 100%; font-size: 18px;"  data-toggle="modal" data-target="#saveModal">Save</button>
                 <button type="button" id="load" class="btn btn-secondary" style="margin-top: 1rem;margin-right: 1rem; height: 3rem; width: 100%; font-size: 18px;" data-toggle="modal" data-target="#loadModal">Load</button>
-                <button type="button" id="reset" class="btn btn-danger" style="margin-top: 1rem; margin-right: 1rem; height: 3rem; width: 100%; font-size: 18px;">Reset</button>
             </form>
             </div>
         
