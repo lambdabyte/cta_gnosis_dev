@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+<div  class="container-fluid" style="height: 100vh;">
+    <div class="row" style="height: 100%;">
+        <div class="col-lg-4" style="height: 100%;">
+
+                
+                <h1 class="text-light bg-dark" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -2px;">{{ current_user.username }}'s Tasks 
+                    <button type="button" class="btn btn-light" style="float: right; height: 3rem; width: 3rem;" data-toggle="modal" data-target="#addAssignModal"><i class="fas fa-plus"></i></button></h1>
+                <div id="subject-container" style="border: 1px solid grey; width: 90%; padding: 1rem 1rem 1rem 1rem;">
+                    
+                    <div class="list-group">
+                        {% for task in tasks %}
+                        <button type="button" class="list-group-item list-group-item-action" id="taskButton">
+                            {{ task.task_name }}<i class="fas fa-circle" style="color: {{ task_color[task.task_name] }}; float: right;"></i><br>
+                            <div style="color: grey; margin-top: 0.5rem; font-size: 12px;">
+                                <span>Subject: {{ task_subjects[task.task_name] }}</span>
+                                <span style="float: right;" class="dueDate">{{ task.due_date.strftime('%m-%d-%Y') }}</span>
+                            </div>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+        </div>
+        <div class="col-lg-8" style="height: 80vh;">
+            <h1 class="text-light bg-dark" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -2px; text-align:center;">Task Info</h1>
+            <div id="taskInfoContainer" style="border: 1px solid grey; width: 90%; height: 100%; padding: 1rem 1rem 1rem 1rem;">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addAssignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Assignment</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ url_for('add_task') }}" method="post" id="addAssignForm">
+            <div class="modal-body">
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Title:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.title(class="form-control", size=26) }}</div>
+                </div>
+                {% if form.subjects.choices %}
+                    <div class="row" id="modal-row">
+                        {{ form.hidden_tag() }}
+                        <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Subject:<span id="required-splat" style="color: red;">*</span></div>
+                        <div class="col-sm-8">{{ form.subjects(class="form-control") }}</div>
+                    </div>    
+                {% endif %}
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Due Date:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.date(class="form-control",size=26) }}</div>
+                </div>
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Description:</div>
+                    <div class="col-sm-8">{{ form.description(class="form-control",size=256) }}</div>
+                </div>
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Type:</div>
+                    <div class="col-sm-8">{{ form.assign_type(class="form-control") }}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class="btn btn-outline-dark") }}
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+      
+
+</script>
+
+{% endblock %}

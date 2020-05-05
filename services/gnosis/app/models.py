@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256))
     subjects = db.relationship('Subject', secondary=usersubjects, lazy='subquery',
         backref=db.backref('users', lazy=True))
+    tasks = db.relationship('Task', backref='user', lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)    
@@ -36,9 +37,24 @@ class User(UserMixin, db.Model):
 class Subject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     subject_name = db.Column(db.String(120), index=True, unique=True)
+    tasks = db.relationship('Task', backref='subject', lazy=True)
 
     def __repr__(self):
         return '<Subject {}>'.format(self.subject_name)
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    task_name = db.Column(db.String(120), index=True)
+    due_date = db.Column(db.DateTime, index=True)
+    task_description = db.Column(db.String(256))
+    task_type = db.Column(db.String(120), nullable=True, index=True)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'),
+        nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    
+
+
 
 # lets login module know where to find user id
 @login.user_loader

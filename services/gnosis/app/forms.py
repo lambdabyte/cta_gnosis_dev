@@ -1,8 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField, TextAreaField
+from wtforms.fields.html5 import DateField
 from wtforms_components import ColorField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models import User
+from app.models import User, Subject, usersubjects
+from flask_login import current_user
+
 
 class RegistrationForm(FlaskForm):
     entered_username = StringField('Username', validators=[DataRequired()])
@@ -42,5 +46,17 @@ class SubjectForm(FlaskForm):
     subject_description = StringField('Subject description', validators=[DataRequired()])
     color = ColorField(default='#0000FF', validators=[DataRequired()])
     submit = SubmitField('Add')
+
+class TaskForm(FlaskForm):
+    title = StringField('name', validators=[DataRequired()])
+    subjects = SelectField('subject', validators=[DataRequired()])
+    date = DateField('date', validators=[DataRequired()])
+    description = TextAreaField('description')
+    assign_type = StringField('type')
+    submit = SubmitField('Add')
+
+
+
+
 
     

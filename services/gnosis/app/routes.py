@@ -1,11 +1,11 @@
 from app import app
 from app import db
 import os
-from app.models import User, Subject, usersubjects
-from app.forms import RegistrationForm, LoginForm, SubjectForm
+from app.models import User, Subject, Task, usersubjects
+from app.forms import RegistrationForm, LoginForm, SubjectForm, TaskForm
 from flask_restx import Resource
 from flask_login import current_user, login_user, logout_user, login_required
-from flask import render_template, flash, redirect, url_for, request, json
+from flask import render_template, flash, redirect, url_for, request, json, jsonify
 from werkzeug.urls import url_parse
 from sqlalchemy import text
 
@@ -155,13 +155,20 @@ def edit_subject():
 def goals():
     user = current_user
     subjects =  user.subjects
-    data = ""
+    filenames = []
+    load_graph = ""
+    graph_loaded = ""
     directory = '/home/gnosis/services/gnosis/app/json/'
+    if request.method == 'POST':
+        if request.form['fileload']:
+            load_graph = request.form['fileload']
+            graph_loaded = json.load(open(os.path.join(directory, load_graph)))
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         id_test = filename.split('-')
         if int(id_test[0]) == current_user.id:
-            data = json.load(open(os.path.join(directory, filename)))
+            msg_json = {'text': id_test[1], 'value': filename}
+            filenames.append(msg_json)  
     user_subjects_select_sql = text(
         ' SELECT subject_id, user_id, subject_description, color '
         ' FROM usersubjects '
@@ -171,7 +178,7 @@ def goals():
     )
     user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
     subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
-    return render_template('goals.html', subjects=subjects, subject_descriptions=subject_descriptions, data=data)
+    return render_template('goals.html', subjects=subjects, subject_descriptions=subject_descriptions, filenames=filenames, graph_loaded=graph_loaded)
 
 @app.route('/save_graph', methods=['POST'])
 @login_required
@@ -182,6 +189,64 @@ def save_graph():
     with open(file_name, 'w') as f:
         json.dump(graph, f)
     return redirect(url_for('goals'))
+
+@app.route('/tasks', methods=['GET', 'POST'])
+@login_required
+def tasks():
+    form = TaskForm()
+    user = current_user
+    subjects =  user.subjects    
+    user_subjects_select_sql = text(
+        ' SELECT subject_id, user_id, subject_description, color '
+        ' FROM usersubjects '
+        ' JOIN subject ON (subject.id = usersubjects.subject_id) '
+        ' JOIN "user" ON ("user".id = usersubjects.user_id) '
+        ' WHERE user_id = :userID'
+    )
+    task_info_select_sql = text(
+        ' SELECT color '
+        ' FROM usersubjects '
+        ' JOIN subject ON (subject.id = usersubjects.subject_id) '
+        ' JOIN "user" ON ("user".id = usersubjects.user_id) '
+        ' WHERE user_id = :userID '
+        ' AND subject_id = :subjectID '
+    )
+    tasks = user.tasks
+    task_color = {}
+    task_subjects = {}
+    user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
+    subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
+    for task in tasks:
+        task_info_query = db.engine.execute(task_info_select_sql, userID=user.id, subjectID=task.subject_id)
+        task_color[task.task_name] = task_info_query.fetchone()[0]
+        for subject in subjects:
+            if subject.id == task.subject_id:
+                task_subjects[task.task_name] = subject.subject_name
+    if len(subjects) > 0:
+        form.subjects.choices = []
+        for subject in subjects:
+            form.subjects.choices.append((subject.id, subject.subject_name))
+    return render_template('tasks.html', subjects=subjects, subject_descriptions=subject_descriptions, form=form, tasks=tasks, task_color=task_color, task_subjects=task_subjects)
+
+@app.route('/add_task', methods=['GET', 'POST'])
+@login_required
+def add_task():
+    task_title = request.form['title']
+    subject_id = request.form['subjects']
+    due_date = request.form['date']
+    task_description  = request.form['description']
+    task_type = request.form['assign_type']
+    task = Task(
+        task_name=task_title, 
+        due_date=due_date,
+        task_description=task_description,
+        task_type=task_type,
+        subject_id=subject_id,
+        user_id=current_user.id
+        )
+    db.session.add(task)
+    db.session.commit()
+    return redirect(url_for('tasks'))
 
 class Ping(Resource):
     def get(self):

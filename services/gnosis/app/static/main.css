@@ -102,9 +102,31 @@ h1#profileUsername {
     width: 48%;
 }
 
+/* Tasks */
+#taskButton {
+ 
+}
+
 /* Modals */
 #modal-row {
     margin-top: 1rem;
+}
+
+
+/* goals */
+#can-col {
+    padding: 1rem 1rem 1rem 1rem; 
+    height: 85vh;
+}
+
+#canvas {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    z-index: 0;
+    border: 1px solid grey;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 @media only screen and (max-width: 991px) {
