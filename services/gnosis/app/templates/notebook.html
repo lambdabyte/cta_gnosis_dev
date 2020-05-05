@@ -18,7 +18,8 @@
                     <div class="row"><h2 class="search-note" data-self="{{ subject.subject_name }}" id="{{ subject.subject_name }}">{{ subject.subject_name }}</h2><span style="margin-left: 4px;"></span><a data-self="{{ subject.subject_name }}" data-status="closed" style="color: black;" class="addNote"><i class="fas fa-plus"></i></a></span></div>
                     <div class="note-block">
                         <ul class="subject-notes" data-subject="{{ subject.subject_name }}">
-                            <li style="display: none;" class="new-note-list" data-subject="{{ subject.subject_name }}"><div class="row" style="display: flex; align-items: center;"><input type="text" name="newnote" id="newNote" class="form-control col-sm-2"><button type="submit" class="btn btn-success confirm-add" style="margin-left: 4px;" data-subject="{{ subject.subject_name }}" data-subjectid="{{ subject.id }}"><i class="fas fa-check" style="font-size: 20px; color:white; padding: -1rem;"></i></button></div></li>
+                            <li style="display: none;" class="new-note-list" data-subject="{{ subject.subject_name }}"><div class="row" style="display: flex; align-items: center;"><input type="text"   oninvalid="this.setCustomValidity('no spaces')"
+                                oninput="this.setCustomValidity('')"  name="newnote" id="newNote" class="form-control col-sm-2" pattern="[^' ']+"><button type="submit" class="btn btn-success confirm-add" style="margin-left: 4px;" data-subject="{{ subject.subject_name }}" data-subjectid="{{ subject.id }}"><i class="fas fa-check" style="font-size: 20px; color:white; padding: -1rem;"></i></button></div></li>
                             {% for note in notes %}
 
                                     {% if note['subject'] == subject.subject_name %}
@@ -88,11 +89,7 @@ function myFunction() {
     const fuse = new Fuse(split_input, options);
     
     // Loop through all table rows, and hide those who don't match the search query
-    for (i = 0; i < titles.length; i++) {
-        var current_title = titles[i];
-        var title_text = current_title.textContent.toUpperCase();
-        const result = fuse.search(title_text);
-    }
+    
 
     for (i = 0; i < titles.length; i++) {
         td = titles[i];
@@ -121,12 +118,10 @@ function myFunction() {
                             
                         }
                     }
-                }
-                
+                } 
             }
         }
     }
-    
 }
 
 </script>
