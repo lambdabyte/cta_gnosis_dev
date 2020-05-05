@@ -14,8 +14,8 @@
                     
                     <div class="list-group">
                         {% for task in tasks %}
-                        <button type="button" class="list-group-item list-group-item-action" id="taskButton">
-                            {{ task.task_name }}<i class="fas fa-circle" style="color: {{ task_color[task.task_name] }}; float: right;"></i><br>
+                        <button type="button" class="list-group-item list-group-item-action task-buttons" id="taskButton" data-taskid="{{ task.id }}" data-taskname="{{ task.task_name }}" data-taskcolor="{{ task_color[task.task_name] }}" data-taskdate="{{ task.due_date }}" data-taskdescription="{{ task.task_description }}" data-tasksubject="{{ task_subjects[task.task_name] }}">
+                            <span id="taskName">{{ task.task_name }}<i class="fas fa-circle" style="color: {{ task_color[task.task_name] }}; float: right;"></i></span><br>
                             <div style="color: grey; margin-top: 0.5rem; font-size: 12px;">
                                 <span>Subject: {{ task_subjects[task.task_name] }}</span>
                                 <span style="float: right;" class="dueDate">{{ task.due_date.strftime('%m-%d-%Y') }}</span>
@@ -25,10 +25,33 @@
                     </div>
                 </div>
         </div>
-        <div class="col-lg-8" style="height: 80vh;">
-            <h1 class="text-light bg-dark" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -2px; text-align:center;">Task Info</h1>
-            <div id="taskInfoContainer" style="border: 1px solid grey; width: 90%; height: 100%; padding: 1rem 1rem 1rem 1rem;">
-
+        <div class="col-lg-8" style="height: fit-content;">
+            <h1 class="text-light bg-dark" id="taskInfoHead" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -2px; text-align:center;">Task Info</h1>
+            <div id="taskInfoContainer" style="border: 1px solid grey; width: 90%; height: 100%; padding: 2rem 2rem 2rem 2rem; font-size: 18px; border-top: 0;">
+                <div class="form-group row">
+                    
+                    <div class="col-sm-8">
+                        <label for="taskName" style="color: grey">Task</label>
+                      <input type="text" readonly class="form-control-plaintext" id="taskNameLine" value="" style="border: 0; border-bottom: 1px solid #D3D3D3;">
+                    </div>
+                  </div>
+                  <div class="form-group row" style="margin-top: 3rem;">
+                    
+                    <div class="col-sm-6">
+                    <label for="taskSubject" style="color: grey">Subject</label>
+                      <input type="text" readonly class="form-control-plaintext" id="taskSubjectLine" value="" style="border: 0; border-bottom: 1px solid #D3D3D3;">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="taskDate" style="color: grey">Due Date</label>
+                          <input type="text" readonly class="form-control-plaintext" id="taskDateLine" value="" style="border: 0; border-bottom: 1px solid #D3D3D3;">
+                    </div>                  
+                  </div>
+                  <div class="form-group row" style="margin-top: 5rem;">
+                      <div class="col-sm-12">
+                        <label for="taskDescription" style="color: grey">Description</label>
+                        <textarea readonly class="form-control" style="background-color: white; height: 300px;" id="taskDescriptionLine"></textarea>
+                      </div>
+                  </div>
             </div>
         </div>
     </div>
@@ -84,7 +107,39 @@
 </div>
 
 <script type="text/javascript">
-      
+
+var task_buttons = document.getElementsByClassName("task-buttons");
+
+for (button of task_buttons) {
+    button.addEventListener("click", function() {
+        var task_id = this.dataset.taskid;
+        var task_name = this.dataset.taskname;
+        var task_color = this.dataset.taskcolor;
+        var task_date = this.dataset.taskdate;
+        var task_description = this.dataset.taskdescription;
+        var task_subject = this.dataset.tasksubject;
+
+        var text_color = getContrastYIQ(task_color.slice(1));
+
+        document.getElementById("taskNameLine").value = task_name;
+        document.getElementById("taskSubjectLine").value = task_subject;
+        document.getElementById("taskDateLine").value = task_description;
+        document.getElementById("taskDescriptionLine").value = task_description;
+        document.getElementById("taskInfoHead").classList.remove("text-light");
+        document.getElementById("taskInfoHead").classList.remove("bg-dark");
+        document.getElementById("taskInfoHead").style.background = task_color;
+        document.getElementById("taskInfoHead").style.color = text_color;
+
+        function getContrastYIQ(hexcolor){
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? 'black' : 'white';
+        }
+
+    })
+}
 
 </script>
 

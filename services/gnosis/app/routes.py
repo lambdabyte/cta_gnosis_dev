@@ -248,6 +248,23 @@ def add_task():
     db.session.commit()
     return redirect(url_for('tasks'))
 
+@app.route('/notebook', methods=['GET', 'POST'])
+@login_required
+def notebook():
+    user = current_user
+    subjects =  user.subjects    
+    user_subjects_select_sql = text(
+        ' SELECT subject_id, user_id, subject_description, color '
+        ' FROM usersubjects '
+        ' JOIN subject ON (subject.id = usersubjects.subject_id) '
+        ' JOIN "user" ON ("user".id = usersubjects.user_id) '
+        ' WHERE user_id = :userID'
+    )
+    test_notes = ['note one', 'note two', 'note three', 'note one million']
+    user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
+    subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
+    return render_template('notebook.html', subjects=subjects, subject_descriptions=subject_descriptions, note_titles=test_notes)
+
 class Ping(Resource):
     def get(self):
         return {

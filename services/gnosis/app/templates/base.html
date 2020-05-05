@@ -29,7 +29,7 @@
 
 
             <!-- For url name string in list, print url and highlight based on current page active -->
-            {% for x in ['home', 'subjects', 'goals', 'tasks'] %}
+            {% for x in ['home', 'subjects', 'goals', 'tasks', 'notebook'] %}
                 <li {% if request.path  == url_for(x) %} class="nav-item active" {% endif %}><a href="{{ url_for(x) }}" class="nav-link">{{ x | capitalize }}</a></li>
             {% endfor %}
 
