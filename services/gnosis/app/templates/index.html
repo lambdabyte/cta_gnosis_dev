@@ -1,9 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Welcome to Gnosis
-        {% if current_user.username is defined  %},
-         {{ current_user.username }}.
-        {% endif %}
-          Site under construction.</h1>
+    <div style="height: 80vh; width: 100vw; margin: auto; display:flex; align-items: center;" id="billboard">
+      <div id="overlay">
+        
+        <h1 class="text-dark" id="frontTitle" style="opacity: 1;">Gnosis</h1>
+
+      </div>
+      
+    </div>
+    <div class="bg-dark" style="width: 100vw; height: 100vh; padding: 8rem 10rem 0rem 10rem;">
+      <h2 class="text-light" style="text-align: center;">Recent User Activity</h2>
+      <div class="row" style="margin-bottom: 4rem; text-align:center;">
+        
+        {% for user in users %}
+        <div class="col-lg-4">
+            <img src="{{ user.avatar(120) }}" style="margin-top: 2rem;"><br>
+            <h3 id="profileUsername" class="text-light">{{ user.username }}</h3>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
 {% endblock %}

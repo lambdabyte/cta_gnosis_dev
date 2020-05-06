@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+<div  class="container-fluid" style="height: 100vh;">
+    <div class="row" style="height: 100%;">
+        <div class="col-lg-4" style="height: 100%;">
+
+                
+                <h1 class="text-light bg-dark" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -2px;">{{ current_user.username }}'s Tasks 
+                    <button type="button" class="btn btn-light" style="float: right; height: 3rem; width: 3rem;" data-toggle="modal" data-target="#addAssignModal"><i class="fas fa-plus"></i></button></h1>
+                <div id="subject-container" style="border: 1px solid grey; width: 90%; padding: 1rem 1rem 1rem 1rem;">
+                    
+                    <div class="list-group">
+                        {% for task in tasks %}
+                        <button type="button" class="list-group-item list-group-item-action task-buttons" id="taskButton" data-taskid="{{ task.id }}" data-taskname="{{ task.task_name }}" data-taskcolor="{{ task_color[task.task_name] }}" data-taskdate="{{ task.due_date }}" data-taskdescription="{{ task.task_description }}" data-tasksubject="{{ task_subjects[task.task_name] }}">
+                            <span id="taskName">{{ task.task_name }}<i class="fas fa-circle" style="color: {{ task_color[task.task_name] }}; float: right;"></i></span><br>
+                            <div style="color: grey; margin-top: 0.5rem; font-size: 12px;">
+                                <span>Subject: {{ task_subjects[task.task_name] }}</span>
+                                <span style="float: right;" class="dueDate">{{ task.due_date.strftime('%m-%d-%Y') }}</span>
+                            </div>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+        </div>
+        <div class="col-lg-8" style="height: fit-content;">
+            <h1 class="text-light bg-dark" id="taskInfoHead" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -2px; text-align:center;">Task Info</h1>
+            <div id="taskInfoContainer" style="border: 1px solid grey; width: 90%; height: 100%; padding: 2rem 2rem 2rem 2rem; font-size: 18px; border-top: 0;">
+                <div class="form-group row">
+                    
+                    <div class="col-sm-8">
+                        <label for="taskName" style="color: grey">Task</label>
+                      <input type="text" readonly class="form-control-plaintext" id="taskNameLine" value="" style="border: 0; border-bottom: 1px solid #D3D3D3;">
+                    </div>
+                  </div>
+                  <div class="form-group row" style="margin-top: 3rem;">
+                    
+                    <div class="col-sm-6">
+                    <label for="taskSubject" style="color: grey">Subject</label>
+                      <input type="text" readonly class="form-control-plaintext" id="taskSubjectLine" value="" style="border: 0; border-bottom: 1px solid #D3D3D3;">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="taskDate" style="color: grey">Due Date</label>
+                          <input type="text" readonly class="form-control-plaintext" id="taskDateLine" value="" style="border: 0; border-bottom: 1px solid #D3D3D3;">
+                    </div>                  
+                  </div>
+                  <div class="form-group row" style="margin-top: 5rem;">
+                      <div class="col-sm-12">
+                        <label for="taskDescription" style="color: grey">Description</label>
+                        <textarea readonly class="form-control" style="background-color: white; height: 300px;" id="taskDescriptionLine"></textarea>
+                      </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addAssignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Assignment</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ url_for('add_task') }}" method="post" id="addAssignForm">
+            <div class="modal-body">
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Title:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.title(class="form-control", size=26) }}</div>
+                </div>
+                {% if form.subjects.choices %}
+                    <div class="row" id="modal-row">
+                        {{ form.hidden_tag() }}
+                        <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Subject:<span id="required-splat" style="color: red;">*</span></div>
+                        <div class="col-sm-8">{{ form.subjects(class="form-control") }}</div>
+                    </div>    
+                {% endif %}
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Due Date:<span id="required-splat" style="color: red;">*</span></div>
+                    <div class="col-sm-8">{{ form.date(class="form-control",size=26) }}</div>
+                </div>
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Description:</div>
+                    <div class="col-sm-8">{{ form.description(class="form-control",size=256) }}</div>
+                </div>
+                <div class="row" id="modal-row">
+                    {{ form.hidden_tag() }}
+                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Type:</div>
+                    <div class="col-sm-8">{{ form.assign_type(class="form-control") }}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class="btn btn-outline-dark") }}
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+var task_buttons = document.getElementsByClassName("task-buttons");
+
+for (button of task_buttons) {
+    button.addEventListener("click", function() {
+        var task_id = this.dataset.taskid;
+        var task_name = this.dataset.taskname;
+        var task_color = this.dataset.taskcolor;
+        var task_date = this.dataset.taskdate;
+        var task_description = this.dataset.taskdescription;
+        var task_subject = this.dataset.tasksubject;
+
+        var text_color = getContrastYIQ(task_color.slice(1));
+
+        document.getElementById("taskNameLine").value = task_name;
+        document.getElementById("taskSubjectLine").value = task_subject;
+        document.getElementById("taskDateLine").value = task_description;
+        document.getElementById("taskDescriptionLine").value = task_description;
+        document.getElementById("taskInfoHead").classList.remove("text-light");
+        document.getElementById("taskInfoHead").classList.remove("bg-dark");
+        document.getElementById("taskInfoHead").style.background = task_color;
+        document.getElementById("taskInfoHead").style.color = text_color;
+
+        function getContrastYIQ(hexcolor){
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? 'black' : 'white';
+        }
+
+    })
+}
+
+</script>
+
+{% endblock %}

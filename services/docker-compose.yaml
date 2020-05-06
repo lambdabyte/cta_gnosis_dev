@@ -11,7 +11,7 @@ services:
               source: ./gnosis
               target: /home/gnosis/services/gnosis
         ports:
-            - 8000:5000
+            - 8080:5000
             - 5432:5432
         environment: 
             - FLASK_APP=home/gnosis/services/gnosis/gnosis.py
