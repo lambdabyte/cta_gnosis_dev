@@ -1,6 +1,7 @@
 from app import app
 from app import db
 import os
+import sys
 from app.models import User, Subject, Task, usersubjects
 from app.forms import RegistrationForm, LoginForm, SubjectForm, TaskForm
 from flask_restx import Resource
@@ -8,6 +9,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flask import render_template, flash, redirect, url_for, request, json, jsonify
 from werkzeug.urls import url_parse
 from sqlalchemy import text
+from .clients import Dynamo_Client
 import base64
 
 @app.route('/index')
@@ -135,6 +137,7 @@ def delete_subject():
     # Check if other users have subject before deleting from main subjects
     user_subjects_check_sql = text(' SELECT subject_id FROM usersubjects WHERE subject_id = :subjectID ') 
     user_subjects_check = db.engine.execute(user_subjects_check_sql, subjectID=subject_to_delete)
+    # check if subject 
     subject_has_other_users=False
     for row in user_subjects_check:
         if row[0] == int(subject_to_delete):
@@ -160,11 +163,12 @@ def edit_subject():
 @app.route('/goals', methods=['GET', 'POST'])
 @login_required
 def goals():
+    dynamo_client = Dynamo_Client()
     user = current_user
-    subjects =  user.subjects
-    filenames = []
+    subjects =  current_user.subjects
     load_graph = ""
-    graph_loaded = ""
+    graph_loaded = "" 
+    filenames = dynamo_client.list_userplan_names(str(current_user.id))
     directory = '/home/gnosis/services/gnosis/app/json/'
     if request.method == 'POST':
         try:
@@ -173,12 +177,6 @@ def goals():
                 graph_loaded = json.load(open(os.path.join(directory, load_graph)))
         except KeyError:
             pass
-    for file in os.listdir(directory):
-        filename = os.fsdecode(file)
-        id_test = filename.split('-')
-        if int(id_test[0]) == current_user.id:
-            msg_json = {'text': id_test[1], 'value': filename}
-            filenames.append(msg_json)  
     user_subjects_select_sql = text(
         ' SELECT subject_id, user_id, subject_description, color '
         ' FROM usersubjects '
@@ -186,19 +184,78 @@ def goals():
         ' JOIN "user" ON ("user".id = usersubjects.user_id) '
         ' WHERE user_id = :userID'
     )
-    user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=user.id)
+    user_subjects_query = db.engine.execute(user_subjects_select_sql, userID=current_user.id)
     subject_descriptions = {row[0]:{'description': row[2], 'color': row[3]} for row in user_subjects_query}
     return render_template('goals.html', subjects=subjects, subject_descriptions=subject_descriptions, filenames=filenames, graph_loaded=graph_loaded)
 
-@app.route('/save_graph', methods=['POST'])
+@app.route('/save_graph', methods=['GET', 'POST'])
 @login_required
 def save_graph():
-    graph = request.form['jsonsubmit']
-    plan_name = str(current_user.id) + '-' + request.form['plan_name']
-    file_name = '/home/gnosis/services/gnosis/app/json/' + plan_name + '-graph.json'
-    with open(file_name, 'w') as f:
-        json.dump(graph, f)
-    return redirect(url_for('goals'))
+    dynamo_client = Dynamo_Client()
+    data = request.json
+    graph = data['plan_graph']
+    plan_name = data['plan_name']
+    # New dynamoDB storage
+    graph_json = json.loads(graph)
+    graph_start = {
+        'user_id': str(current_user.id), 
+        'plan_name': plan_name
+    }
+    graph_final = {**graph_start, **graph_json}
+    userplan_exists = dynamo_client.check_userplan_exists(
+        str(current_user.id), plan_name)
+    if userplan_exists == False: 
+        dynamo_client.put_item_in_table(graph_final, 'gnosis_user_plans')
+        msg = plan_name + ' saved.'
+        response = jsonify(
+            message=msg,
+            saved=1
+        )
+    else:
+        msg = plan_name + ' alread exists. Overwrite plan?'
+        response = jsonify(
+            message=msg,
+            saved=0
+        )
+    return response
+    
+    # Old code for file storage
+    # plan_name = str(current_user.id) + '-' + request.form['plan_name']
+    # file_name = '/home/gnosis/services/gnosis/app/json/' + plan_name + '-graph.json'
+    # with open(file_name, 'w') as f:
+    #     json.dump(graph, f)
+    
+@app.route('/overwrite_graph', methods=['GET', 'POST'])
+@login_required
+def overwrite_graph():
+    dynamo_client = Dynamo_Client()
+    data = request.json
+    graph = data['plan_graph']
+    plan_name = data['plan_name']
+    # New dynamoDB storage
+    graph_json = json.loads(graph)
+    graph_start = {
+        'user_id': str(current_user.id), 
+        'plan_name': plan_name
+    }
+    graph_final = {**graph_start, **graph_json}
+    dynamo_client.put_item_in_table(graph_final, 'gnosis_user_plans')
+    msg = plan_name + ' saved.'
+    response = jsonify(message=msg)
+    return response
+
+# @app.route('/get_notes', methods=['GET', 'POST'])
+# @login_required
+# def get_notes():
+#     note = request.args.get('note', 0, type=str)
+#     subject = request.args.get('sub', 0, type=str)
+#     notes = []
+#     order = {}
+#     parent_dir = '/home/gnosis/services/gnosis/app/notebooks/' + str(current_user.id) + '-' + subject + '/' + str(current_user.id) + '-' + note
+#     with open(parent_dir, 'r') as file:
+#         data = file.read().replace('\n', '')
+#     order = {'note': data}
+#     return jsonify(result=order)
 
 @app.route('/tasks', methods=['GET', 'POST'])
 @login_required
@@ -261,8 +318,6 @@ def add_task():
 @app.route('/notebook', methods=['GET', 'POST'])
 @login_required
 def notebook():
-    
-
     notes = []
     order = {}
     parent_dir = '/home/gnosis/services/gnosis/app/notebooks/'

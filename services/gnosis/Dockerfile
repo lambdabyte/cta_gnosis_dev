@@ -18,6 +18,7 @@ RUN pip install gunicorn
 
 COPY /app ./app
 COPY gnosis.py boot.sh ./
+RUN mkdir /home/gnosis/.aws
 RUN chmod +x boot.sh
 RUN chmod +x gnosis.py
 

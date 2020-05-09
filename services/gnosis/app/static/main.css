@@ -1,5 +1,9 @@
 /* General */
 
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 #required-splat {
     margin-left: 4px;
 }

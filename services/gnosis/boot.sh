@@ -2,6 +2,7 @@
 export FLASK_APP=gnosis.py
 export FLASK_DEBUG=1
 
+ls -a ~/
 until flask db upgrade
   do
       exec flask db upgrade

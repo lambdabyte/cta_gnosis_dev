@@ -7,10 +7,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_login import login_required
+from werkzeug.debug import DebuggedApplication
+
 
 # instantiate the users service
 app = Flask(__name__)
-
+app.wsgi_app = DebuggedApplication(app.wsgi_app, evalex=True)
 # initalize api
 api = Api(app)
 
