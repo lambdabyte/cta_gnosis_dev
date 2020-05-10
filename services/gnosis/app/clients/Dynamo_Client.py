@@ -1,7 +1,8 @@
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
-from botocore import ClientError
 from ..exceptions import Base_Exception
+from ..utilities import Dict_FloatsToDecimals
+
 
 class Dynamo_Client():
 
@@ -39,6 +40,9 @@ class Dynamo_Client():
         """
         # Instantiate table        
         table = self.dynamo_resource.Table(table)
+        # convert all floats to decimals, if any
+        recursive_float_decimal_parser = Dict_FloatsToDecimals()
+        recursive_float_decimal_parser.recursive_float_to_decimal(item)
         # Insert item
         table.put_item(
             Item=item
@@ -79,7 +83,7 @@ class Dynamo_Client():
             list -- list of user's existing plans. Empty if no plans exist.
         """        
         try:
-            # Get user's plans
+            # Get list of user's plans
             response = self.userplan_table.query(
                 KeyConditionExpression = Key('user_id').eq(user_id)
             )
@@ -112,6 +116,7 @@ class Dynamo_Client():
             python list of dicts -- user plan
         """        
         try:
+            # Get user plan and graph data
             response = self.userplan_table.get_item(
                 Key={
                     'user_id': user_id,
@@ -121,4 +126,6 @@ class Dynamo_Client():
             userplan = response['Item']
             return userplan
         except KeyError:
+            # If backend error
             raise Base_Exception("There was an error on our end.")
+
