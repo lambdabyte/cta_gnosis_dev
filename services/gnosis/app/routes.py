@@ -11,21 +11,51 @@ from werkzeug.urls import url_parse
 from sqlalchemy import text
 from .clients import Dynamo_Client
 from .utilities import JSON_Decimal_Encoder, Dict_FloatsToDecimals
+from .views.view_templates import List_View, API_View
 import base64
 
-@app.route('/home')
-def home():
-    users = User.query.all()
-    return render_template('index.html', users=users)
+
+class LandingPage_View(List_View):
+
+    def __init__(self):
+        pass
+
+    def get_template_name(self):
+        return 'index.html'
+
+    def get_context(self):
+        context = {'users': User.query.all(), 'title': 'Home'}
+        return context
+
+# url Home view
+app.add_url_rule('/home/', view_func = LandingPage_View.as_view('home'))
 
 
-@app.route('/health_check')
-def health_check():
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+class HealthCheck_View(API_View):
 
-"""
-User Viewss
-"""
+    def __init__(self):
+        pass
+
+    def get(self):
+        return self.get_json_response(
+            ({'success':True}), 
+            200, 
+            {'ContentType':'application/json'}
+        )
+
+# urls for health check API
+healthcheck_api_view = HealthCheck_View.as_view('health_check')
+app.add_url_rule('/health_check/', view_func = healthcheck_api_view, methods=["GET",])
+
+
+# class Registration_View(List_View):
+    
+#     def get_template_name(self):
+#         return "register.html"
+
+#     def get_context(self):
+#         context = {'title': 'Register'}
+#         return context
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

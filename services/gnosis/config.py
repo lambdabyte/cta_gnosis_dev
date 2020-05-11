@@ -1,4 +1,5 @@
 import os
+from app.clients import SM_Client
 
 class BaseConfig:
     TESTING = False
@@ -6,5 +7,7 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:robertnields2020@cta-gnosis-db-dev.cd1wzcrr5t3s.us-east-1.rds.amazonaws.com'
+    dev_sm_client = SM_Client('psql-gnosis-dev', 'us-east-1')
+    secret = dev_sm_client.get_secret()
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}'.format(secret['username'], secret['password'], secret['host'])
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
