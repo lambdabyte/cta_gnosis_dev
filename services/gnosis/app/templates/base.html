@@ -21,14 +21,14 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand" href="#"><i class="fas fa-project-diagram"></i> Gnosis</a>
+            <a class="navbar-brand" href="{{ url_for('landing')}}"><i class="fas fa-project-diagram"></i> Gnosis</a>
   
             <ul class="navbar-nav mr-auto">
 
 
 
             <!-- For url name string in list, print url and highlight based on current page active -->
-            {% for x in ['home', 'subjects', 'goals', 'tasks', 'notebook'] %}
+            {% for x in ['subjects', 'goals', 'tasks', 'notebook'] %}
                 <li {% if request.path  == url_for(x) %} class="nav-item active" {% endif %}><a href="{{ url_for(x) }}" class="nav-link">{{ x | capitalize }}</a></li>
             {% endfor %}
 

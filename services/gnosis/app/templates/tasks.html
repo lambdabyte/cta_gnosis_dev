@@ -123,7 +123,7 @@ for (button of task_buttons) {
 
         document.getElementById("taskNameLine").value = task_name;
         document.getElementById("taskSubjectLine").value = task_subject;
-        document.getElementById("taskDateLine").value = task_description;
+        document.getElementById("taskDateLine").value = task_date.split(' ')[0];
         document.getElementById("taskDescriptionLine").value = task_description;
         document.getElementById("taskInfoHead").classList.remove("text-light");
         document.getElementById("taskInfoHead").classList.remove("bg-dark");

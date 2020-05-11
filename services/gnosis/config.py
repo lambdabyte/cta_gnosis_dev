@@ -7,7 +7,9 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
-    dev_sm_client = SM_Client('psql-gnosis-dev', 'us-east-1')
-    secret = dev_sm_client.get_secret()
-    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}'.format(secret['username'], secret['password'], secret['host'])
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+    dev_sm_db_client = SM_Client('psql-gnosis-dev', 'us-east-1')
+    db_secret = dev_sm_db_client.get_secret()
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}'.format(db_secret['username'], db_secret['password'], db_secret['host'])
+    dev_sm_session_client = SM_Client('session-gnosis-dev', 'us-east-1')
+    session_key = dev_sm_session_client.get_secret()
+    SECRET_KEY = session_key['session_key']
