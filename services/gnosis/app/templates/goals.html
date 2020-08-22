@@ -11,10 +11,10 @@
                 
                 {% for subject in subjects %}
                 <div id="subjectCard">
-                    <div class="card create-flowy" id="{{ subject.subject_name }}" style="width: 300px;" data-status="listed">
+                    <div class="card create-flowy" id="{{ subject.subject_name }}" data-status="listed">
                         
-                        <div class="card-body">
-                            <h4 class="card-title" style="font-size: 20px;">{{ subject.subject_name }}<i class="fas fa-circle" style="font-size: 14px; margin-right: 0.3rem; color: {{ subject_descriptions[subject.id]['color'] }}; float: right;"></i></h4>
+                        <div class="card-body" id="goalCardBody">
+                            <h4 class="card-title" id="goalCardTitle">{{ subject.subject_name }}<i class="fas fa-circle" style="font-size: 14px; margin-right: 0.3rem; color: {{ subject_descriptions[subject.id]['color'] }}; float: right;"></i></h4>
                             <p class="card-text" style="font-size: 14px; color: grey;">{{ subject_descriptions[subject.id]['description'] }}</p>
                             <input type="hidden" id="subjectID" value="{{ subject.id }}">
                             <input type="hidden" id="cardSubjectColor" value ="{{ subject_descriptions[subject.id]['color'] }}">

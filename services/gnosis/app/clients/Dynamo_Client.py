@@ -1,7 +1,6 @@
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from ..exceptions import Base_Exception
-from ..utilities import Dict_FloatsToDecimals
 
 
 class Dynamo_Client():
@@ -40,9 +39,7 @@ class Dynamo_Client():
         """
         # Instantiate table        
         table = self.dynamo_resource.Table(table)
-        # convert all floats to decimals, if any
-        recursive_float_decimal_parser = Dict_FloatsToDecimals()
-        recursive_float_decimal_parser.recursive_float_to_decimal(item)
+        
         # Insert item
         table.put_item(
             Item=item

@@ -11,6 +11,7 @@ from werkzeug.urls import url_parse
 from sqlalchemy import text
 from .clients import Dynamo_Client
 from .utilities import JSON_Decimal_Encoder, Dict_FloatsToDecimals
+from .views.view_templates import List_View, API_View, SQL_ORM_Add_View
 import base64
 
 @app.route('/home')
@@ -18,29 +19,95 @@ def home():
     users = User.query.all()
     return render_template('index.html', users=users)
 
+class LandingPage_View(List_View):
+    """Landing Page
 
-@app.route('/health_check')
-def health_check():
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    Arguments:
+        List_View {base class view}
+    """    
+    def __init__(self):
+        self.template_name = 'index.html'
 
-"""
-User Viewss
-"""
+    def get_template_name(self):
+        return self.template_name
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(
-            username=form.entered_username.data, email=form.entered_email.data)
-        user.set_password(form.entered_password.data)
-        add_user_to_database(user)
-        return redirect(url_for('home'))
-    return render_template('register.html', title='Register', form=form)
+    def get_context(self):
+        """Get template parameters
 
-def add_user_to_database(user):    
-    db.session.add(user)
-    db.session.commit()
+        Returns:
+            dict -- keyword args to pass into template as parameters
+        """        
+        context = {'users': User.query.all()}
+        return context
+
+# url Landing Page view
+app.add_url_rule('/landing/', view_func = LandingPage_View.as_view('landing'))
+
+
+class Registration_View(SQL_ORM_Add_View):
+    methods = ['GET', 'POST']
+
+    def __init__(self):
+        self.template_name = 'register.html'
+        self.form = RegistrationForm()
+    
+    def get_template_name(self):
+        return self.template_name
+
+    def get_form(self):
+        return self.form
+
+    def get_model(self):
+        self.user = User(
+            username=self.form.entered_username.data,
+            email=self.form.entered_email.data
+        )
+        self.user.set_password(self.form.entered_password.data)
+        return self.user
+
+    def get_redirect(self):
+        login_user(self.user)
+        return url_for('user', username=current_user.username)
+
+    def get_context(self):
+        context = {'title': 'Register', 'form': self.form}
+        return context
+
+# url Registration Page view
+app.add_url_rule('/register/', view_func = Registration_View.as_view('register'))
+
+""" In Progress """
+# class Login_View(List_View):
+#     methods = ['GET', 'POST']
+
+#     def __init__(self):
+#         self.template_name = 'login.html'
+#         self.form = LoginForm()
+
+#     def get_template_name(self):
+#         return self.template_name
+
+#     def get_form(self):
+#         return self.form
+
+#     def get_model(self):
+#         user = User.query.filter_by(username=form.entered_username.data).first()
+#         return user
+
+#     def user_credentials_validation(self):
+#         self.valid_user = 1
+#         if (
+#             user is None 
+#             or 
+#             not user.check_password(self.form.entered_password.data).first()
+#             ): valid_user = 0
+#         return valid_user
+
+#     def redirect_to_intended_page(self):
+#         next_page = request.args.get('next')
+#         if not next_page or url_parse(next_page).netloc != '':
+#             next_page = url_for('landing')
+#         return next_page
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -59,15 +126,35 @@ def login():
             next_page = request.args.get('next')
             # if no next page, redirect to home
             if not next_page or url_parse(next_page).netloc != '':
-                next_page = url_for('home')
+                next_page = url_for('landing')
             # else return to user to originally requested page
             return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form, valid_user=valid_user)
+
+
+class HealthCheck_View(API_View):
+
+    def __init__(self):
+        pass
+
+    def get(self):
+        return self.get_json_response(
+            ({'success':True}), 
+            200, 
+            {'ContentType':'application/json'}
+        )
+
+# urls for health check API
+healthcheck_api_view = HealthCheck_View.as_view('health_check')
+app.add_url_rule('/health_check/', view_func = healthcheck_api_view, methods=["GET",])
+
+
+
  
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('landing'))
 
 @app.route('/user/<username>')
 @login_required
