@@ -17,7 +17,7 @@ class SQL_ORM_Add_View(List_View):
     def get_redirect(self):
         raise NotImplementedError
 
-    def add_record_to_db(self):
+    def add_model_to_db(self):
         """Add entry to database
         """        
         db.session.add(self.model)
@@ -33,7 +33,7 @@ class SQL_ORM_Add_View(List_View):
         if form.validate_on_submit():
             # Instance of new user model
             self.model = self.get_model()
-            self.add_record_to_db()
+            self.add_model_to_db()
             # Redirect on successful login
             return redirect(self.get_redirect())
         # Get template contextual arguments

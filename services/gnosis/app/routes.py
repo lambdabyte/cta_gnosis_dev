@@ -11,10 +11,7 @@ from werkzeug.urls import url_parse
 from sqlalchemy import text
 from .clients import Dynamo_Client
 from .utilities import JSON_Decimal_Encoder, Dict_FloatsToDecimals
-<<<<<<< HEAD
 from .views.view_templates import List_View, API_View, SQL_ORM_Add_View
-=======
->>>>>>> parent of c086565... cq
 import base64
 
 @app.route('/home')
@@ -22,7 +19,6 @@ def home():
     users = User.query.all()
     return render_template('index.html', users=users)
 
-<<<<<<< HEAD
 class LandingPage_View(List_View):
     """Landing Page
 
@@ -62,15 +58,16 @@ class Registration_View(SQL_ORM_Add_View):
         return self.form
 
     def get_model(self):
-        user = User(
+        self.user = User(
             username=self.form.entered_username.data,
             email=self.form.entered_email.data
         )
-        user.set_password(self.form.entered_password.data)
-        return user
+        self.user.set_password(self.form.entered_password.data)
+        return self.user
 
     def get_redirect(self):
-        return url_for('login')
+        login_user(self.user)
+        return url_for('user', username=current_user.username)
 
     def get_context(self):
         context = {'title': 'Register', 'form': self.form}
@@ -82,16 +79,6 @@ app.add_url_rule('/register/', view_func = Registration_View.as_view('register')
 """ In Progress """
 # class Login_View(List_View):
 #     methods = ['GET', 'POST']
-=======
-
-@app.route('/health_check')
-def health_check():
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
-
-"""
-User Viewss
-"""
->>>>>>> parent of c086565... cq
 
 #     def __init__(self):
 #         self.template_name = 'login.html'
