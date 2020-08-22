@@ -9,7 +9,9 @@ class Dynamo_Client():
     and resource-specific methods.
     """
 
-    def __init__(self):        
+    def __init__(self):
+        # Set default region
+        boto3.setup_default_session(region_name='us-east-1')        
         # Get the service resource.
         self.dynamo_resource = boto3.resource(
             'dynamodb'
