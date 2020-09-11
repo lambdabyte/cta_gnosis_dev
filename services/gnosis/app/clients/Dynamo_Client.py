@@ -23,6 +23,15 @@ class Dynamo_Client():
         # Default table for resource-specific methods
         self.userplan_table = self.dynamo_resource.Table('gnosis_user_plans')
 
+    def delete_item(self, user_id, plan_name, table):
+        table = self.dynamo_resource.Table(table)
+        table.delete_item(
+            Key={
+                'user_id': str(user_id),
+                'plan_name': plan_name
+            }
+        )
+
     def list_tables(self):
         """General Method -- Lists all DynamoDB tables for current region
 
@@ -92,7 +101,8 @@ class Dynamo_Client():
             for plan in items:
                 userplan_name_json = {
                     'text': plan['plan_name'], 
-                    'value': plan['plan_name']
+                    'value': plan['plan_name'],
+                    'description': plan['plan_description']
                 }
                 userplan_names.append(userplan_name_json)
             return userplan_names

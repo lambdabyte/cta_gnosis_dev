@@ -39,7 +39,7 @@
             
             <div class="col-md-6" style="border: 1px solid #D3D3D3; margin-top:2rem;" id="doc-pad">
                 <form action="{{ url_for('new_notepad') }}" method="post" id="addNoteForm">
-                <label for="docMagic" style="margin-top: 1rem; font-size: 18px;">
+                <label for="docMagic" style="margin-top: 1rem; font-size: 22px;">
                     Notes
                 </label>
                 <input type="hidden" id="notepadHead" name="notepadhead" value="">
@@ -50,8 +50,8 @@
             
             </div>
             <div class="col-md-3" style="padding: 0rem 1rem 0rem 1rem;">
-                <button type="submit" id="saveOpen" class="btn btn-success" style="margin-top: 2rem; height: 3rem; width: 100%; font-size: 18px;"  data-toggle="modal" data-target="#saveModal">Save</button>
-                <button type="button" id="load" class="btn btn-secondary" style="margin-top: 1rem;margin-right: 1rem; height: 3rem; width: 100%; font-size: 18px;" data-toggle="modal" data-target="#loadModal">Load</button>
+                <button disabled type="submit" id="saveOpen" class="btn btn-success" style="margin-top: 2rem; height: 3rem; width: 100%; font-size: 18px;"  data-toggle="modal" data-target="#saveModal">Save</button>
+                <button disabled type="button" id="deleteNote" class="btn btn-secondary" style="margin-top: 1rem;margin-right: 1rem; height: 3rem; width: 100%; font-size: 18px;" data-toggle="modal" data-target="#deleteNoteModal" data-note-to-delete="">Delete</button>
 
             </form>
             </div>
@@ -61,7 +61,29 @@
         </div>
     </div>
 
-
+    <div class="modal" tabindex="-2" role="dialog" id="deleteNoteModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="new-sub-modal-title">Delete Note</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form action="{{ url_for('delete_note') }}" method="post">
+                <input type="hidden" name="note-to-delete" id="noteToDelete">
+                <input type="hidden" name="note-to-delete-subject" id="noteToDeleteSubject">
+                <div class="modal-body">
+                    <p id="confirmMessage"></p> 
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
 
 <script type="text/javascript">
 
@@ -76,9 +98,19 @@ var add_buttons = document.getElementsByClassName("addNote");
 var titles = document.getElementsByClassName("search-note");
 var inputs = document.getElementsByClassName("new-note-list");
 var confirms = document.getElementsByClassName("confirm-add");
+var delete_note = document.getElementById("deleteNote");
+
+delete_note.addEventListener("click", function() {
+    document.getElementById("confirmMessage").innerHTML = "Confirm Delete Note: " + this.dataset.noteToDelete;
+})
 
 $(function() {
     $('a.search-note').bind('click', function() {
+      document.getElementById("deleteNote").dataset.noteToDelete = $(this).text();
+      document.getElementById("noteToDelete").value = $(this).text();
+      document.getElementById("noteToDeleteSubject").value = $(this).data("parent").toString();
+      document.getElementById("saveOpen").disabled = false;
+      document.getElementById("deleteNote").disabled = false;
       $.getJSON('/get_notes', {
         note: $(this).text(),
         sub: $(this).data("parent").toString()

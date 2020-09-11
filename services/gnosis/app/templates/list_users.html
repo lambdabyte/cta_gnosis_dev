@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="border" style="margin: auto; width: 40%;  margin-top: 10rem; padding-left: 1rem; padding-right: 1rem;">
+<h2 style="margin-left: 1rem; margin-top: 2rem;">All Gnosis Users</h2>
+<div class="col-lg-12 row">
+<div class="col-lg-9" id="subjectControl">
+    <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="myInput" onkeyup="myFunction()">
+    
+</div>
+<div class="col-lg-3" style="padding: 1rem 0rem 0rem 1rem; margin-bottom: 1rem;">
+    <select name="" id="selectFilter" class="form-control" >
+        <option value="0">Name</option>
+        <option value="1">Profession</option>
+    </select> 
+</div>
+</div>
+{% for user in users %}
+            <div class="col-lg-12 card-holder" id="subjectCard" data-self="{{ user.username }}" data-profession="{{ user.profession }}">
+                <a href="{{ url_for('user', username=user.username) }}" style="color: inherit;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><img src="{{ user.avatar(32) }}">&nbsp;{{ user.username }}</h5>
+                            <input type="hidden" id="subjectID" value="{{ user.id }}">
+                            <p style="color: grey;">{{ user.profession }}</p> 
+                        </div>
+                    </div>
+                </a>
+            </div>
+{% endfor %}
+</div>
+
+<script type="text/javascript">
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        selectFilter = document.getElementById("selectFilter");
+        td = document.getElementsByClassName("card-holder");
+        
+      
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < td.length; i++) {
+          if (td[i]) {
+            if (selectFilter.value == "0") {
+                txtValue = td[i].dataset.self;
+            } else {
+                txtValue = td[i].dataset.profession;
+            }
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              td[i].style.display = "";
+            } else {
+              td[i].style.display = "none";
+            }
+          }
+        }
+      }
+</script>
+
+{% endblock %}

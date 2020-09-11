@@ -20,9 +20,10 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title"><i class="fas fa-circle" style="font-size: 12px; margin-right: 0.3rem; color: {{ subject_descriptions[subject.id]['color'] }};"></i>{{ subject.subject_name }}</h5>
-                            <p class="card-text">{{ subject_descriptions[subject.id]['description'] }}</p>
+                            <p class="card-text" style="color: grey;">{{ subject_descriptions[subject.id]['description'] }}</p>
                             <input type="hidden" id="subjectID" value="{{ subject.id }}">
                             <input type="hidden" id="cardSubjectColor" value ="{{ subject_descriptions[subject.id]['color'] }}">
+                            <input type="hidden" id="subjectTasks" value="{{ subject.tasks }}">
                         </div>
                     </div>
                 </a>
@@ -91,7 +92,7 @@
                 <div class="row" id="modal-row">
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;">Description:</div>
                     <div class="col-sm-8" id="subjectDescription">
-                        <textarea id="txtArSubjectDescription" rows="4" style="width: 80%;" disabled name="subjectdescription"></textarea>
+                        <textarea id="txtArSubjectDescription" rows="4" style="width: 80%; border: 1px solid lightgrey;" disabled name="subjectdescription"></textarea>
                     </div>
                 </div>
                 <div class="row" id="modal-row">
@@ -114,6 +115,10 @@
 
 <script>
     
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+
     function myFunction() {
         // Declare variables
         var input, filter, table, tr, td, i, txtValue;
@@ -148,6 +153,15 @@
             $('#subjectToDelete').val(subjectID);
             $("#subjectToEdit").val(subjectID);
             $("#subjectColorToEdit").val(subjectColor);
+            if (subjectCard.find("#subjectTasks").val() != "[]") {
+                document.getElementById("deleteSubject").disabled = true;
+                document.getElementById("deleteSubject").dataset.toggle = "tooltip";
+                document.getElementById("deleteSubject").title = "Subject has active tasks or plans";
+            } else {
+                document.getElementById("deleteSubject").disabled = false;
+                document.getElementById("deleteSubject").dataset.toggle = "";
+                document.getElementById("deleteSubject").title = "";
+            }
         });
 
         $("#editSubject").on('click', function (event) {

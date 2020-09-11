@@ -145,18 +145,62 @@ h1#profileUsername {
     margin-top: 1rem;
 }
 
-
 /* goals */
+
+
+#goalContainer {
+    height: 100vh;
+}
+
+#goalRow {
+    height: 100vh;
+}
+
+#subject-container {
+    border: 1px solid grey;
+    width: fit-content;
+    padding: 1rem 1rem 1rem 1rem;
+    min-width: 366px;
+    height: 60vh;
+    overflow-y: scroll;
+}
+
 .card.create-flowy {
     width: 300px;
 }
 
 #goalCardBody {
-    width: 300px
+    width: 300px;
+    text-align: left;
 }
 
 #goalCardTitle {
     font-size: 20px;
+}
+
+#card-dot {
+    font-size: 14px; 
+    margin-right: 0.3rem;
+    float: right; 
+}
+
+#taskTitle {
+    font-size: 14px; 
+    color: grey;
+}
+
+#task-id {
+    display: flex; 
+    background: white;
+    justify-content: center; 
+    flex-direction: column; 
+    padding-left: .5rem; 
+    border: 1px solid lightgrey; 
+    height: 40px; 
+    width: 260px; 
+    font-size: 14px;
+    margin: auto;
+    text-align: left;
 }
 
 #can-col {
@@ -166,13 +210,34 @@ h1#profileUsername {
 
 #canvas {
     position: absolute;
-    width: 90%;
+    width: 1728px;
     height: 80%;
-    z-index: 0;
     border: 1px solid grey;
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+@media only screen and (max-width: 991px) {
+    #canvas {
+        display: block;
+    }
+}
+
+#plannerHead {
+    text-align: center; 
+    margin: 1rem 0rem
+}
+
+#buttonDiv {
+    text-align: center; 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right:auto;
+}
+
 
 /* notes */
 #note-col {
@@ -217,6 +282,17 @@ textarea {
               0 16px 16px rgba(0,0,0,0.12);
     max-height: 1200px;
     font-family: "Lucida Console", Monaco, monospace;
+}
+
+.row-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    margin: auto;
+}
+
+/* Profile Page */
+#planContainer {
+    
 }
 
 @media only screen and (max-width: 991px) {

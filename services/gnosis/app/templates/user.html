@@ -6,26 +6,79 @@
     <div class="row" style="margin-bottom: 4rem;">
         <div class="col" id="profileAvatarColumn">
             <img src="{{ user.avatar(128) }}"><br>
-            <h1 id="profileUsername">{{ user.username }}</h1>
-                
+            <div class="row">
+                <h1 id="profileUsername">{{ user.username }}</h1>
+            </div>
+            <form action="{{ url_for('add_profession', username=user.username) }}" method="post" id="addProfession">
+                <div class="row" >
+                    {% if user.profession %} 
+                        <input class="form-control-plaintext" type="text" id="profession" name="profession" disabled value="{{ user.profession }}" style="width: fit-content; color: grey; margin: auto; text-align: center;">
+                    {% else %}
+                        <input class="form-control-plaintext" type="text" id="profession" name="profession" disabled value="No Profession" style="width: fit-content; color: grey; margin: auto; text-align: center;">
+                    {% endif %} 
+                    {% if current_user.id == user.id %}
+                        <script>
+                            document.getElementById("profession").disabled = false;
+                        </script>
+                    {% endif %}
+                </div>
+            </form>
         </div>
     </div>
-    <h4 style="text-align: center; margin-top: 2rem;">Subjects</h4>
-    <div class="row" id="subjectContainer">
+   
+    <div class="row" id="">
+        <div class="row-container border" style="width: 40%; padding-left: 1rem; padding-right: 1rem;"">
+            <h3 style="margin-bottom: 1rem; margin-left: 1rem;">{{ user.username }}'s Plans</h4>
+        {% for plan in plans %}
+            <div class="col-lg-12 card-holder" id="subjectCard">
+                <a href="{{ url_for('goals', user=user.id, plan=plan['text']) }}" style="color: inherit;">
+                    <div class="card" style="width: 100%;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ plan['text'] }}</h5>
+                            <p class="card-text" style="color: grey;">{{ plan['description'] }}</p>
+                            <p></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
         
+        {% endfor %}
+    </div>
+    </div>
+    
+    <div class="row" style="margin-top: 2rem;">
+        <div class="row-container border" style="width: 40%; padding-left: 1rem; padding-right: 1rem;"">
+            <h3 style="margin-bottom: 1rem; margin-left: 1rem;">{{ user.username }}'s Subjects</h4>
         {% for subject in subjects %}
-            <div class="col-lg-4 col-md-6 card-holder" id="subjectCard" data-self="{{ subject.subject_name }}">
+            <div class="card-holder" id="subjectCard" data-self="{{ subject.subject_name }}">
                 <a href="#" style="color: inherit;" data-target="#viewSubjectModal" data-toggle="modal">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ subject.subject_name }}</h5>
-                            <input type="hidden" id="subjectID" value="{{ subject.id }}">                      </div>
+                            <p class="card-text" style="color: grey;">{{ subject_descriptions[subject.id]['description'] }}</p>
+                            <input type="hidden" id="subjectID" value="{{ subject.id }}">                      
+                        </div>
                     </div>
                 </a>
             </div>
         {% endfor %}
+    </div>
 </div>
 
+<script type="text/javascript">
+    document.getElementById("profession").addEventListener("click", function() {
+        document.getElementById("profession").disabled = false;
+        document.getElementById("profession").focus();
+        document.getElementById("profession").select();
+    });
+
+    $("#profession").on('keyup', function (e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            var professionForm = document.getElementById("addProfession");
+            professionForm.submit();
+        }
+    });
+</script>
 
 
 {% endblock %}

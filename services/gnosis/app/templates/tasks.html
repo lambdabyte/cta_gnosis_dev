@@ -8,17 +8,24 @@
         <div class="col-lg-4" style="height: 100%;">
 
                 
-                <h1 class="text-light bg-dark" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -2px;">{{ current_user.username }}'s Tasks 
-                    <button type="button" class="btn btn-light" style="float: right; height: 3rem; width: 3rem;" data-toggle="modal" data-target="#addAssignModal"><i class="fas fa-plus"></i></button></h1>
+                <h1 class="text-light bg-dark" style="margin-top: 2rem; width: 90%; padding: 1rem; margin-bottom: -1px;">{{ current_user.username }}'s Tasks 
+                    <button type="button" class="btn btn-light" id="addAssignBtn" style="float: right; height: 3rem; width: 3rem;" data-toggle="modal" data-target="#addAssignModal"><i class="fas fa-plus"></i></button></h1>
                 <div id="subject-container" style="border: 1px solid grey; width: 90%; padding: 1rem 1rem 1rem 1rem;">
                     
                     <div class="list-group">
+                        <label for="filterSubject" style="color: grey;">Subject</label>
+                        <select class="form-control" style="margin-bottom: 1rem; width: 40%;" id="subjectFilter" onchange="selectSubject()">
+                                <option>All</option>
+                            {% for task in tasks %}
+                                <option id="filterSubject" value="{{ task_subjects[task.task_name] }}">{{ task_subjects[task.task_name] }}</option>
+                            {% endfor %}
+                        </select>
                         {% for task in tasks %}
                         <button type="button" class="list-group-item list-group-item-action task-buttons" id="taskButton" data-taskid="{{ task.id }}" data-taskname="{{ task.task_name }}" data-taskcolor="{{ task_color[task.task_name] }}" data-taskdate="{{ task.due_date }}" data-taskdescription="{{ task.task_description }}" data-tasksubject="{{ task_subjects[task.task_name] }}">
                             <span id="taskName">{{ task.task_name }}<i class="fas fa-circle" style="color: {{ task_color[task.task_name] }}; float: right;"></i></span><br>
                             <div style="color: grey; margin-top: 0.5rem; font-size: 12px;">
                                 <span>Subject: {{ task_subjects[task.task_name] }}</span>
-                                <span style="float: right;" class="dueDate">{{ task.due_date.strftime('%m-%d-%Y') }}</span>
+                                <span style="float: right;" class="dueDate" id="listDueDate">{{ task.due_date.strftime('%m-%d-%Y') }}</span>
                             </div>
                         </button>
                         {% endfor %}
@@ -52,6 +59,12 @@
                         <textarea readonly class="form-control" style="background-color: white; height: 300px;" id="taskDescriptionLine"></textarea>
                       </div>
                   </div>
+                  <div class="button-row row" style="margin-top: 2rem;">
+                    <div class="col-sm-12" style="text-align: center;">
+                        <button class="btn btn-dark" id="editAssignBtn" data-toggle="modal" data-target="#addAssignModal"style="width: 10%;" disabled>Edit</button>
+                        <button class="btn btn-dark"  id="deleteAssignBtn" data-toggle="modal" data-target="#deleteAssignModal" style="width: 10%;" disabled>Delete</button>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>
@@ -62,7 +75,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add Assignment</h5>
+          <h5 class="modal-title" id="addAssignModalLabel">Add Task</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -72,34 +85,56 @@
                 <div class="row" id="modal-row">
                     {{ form.hidden_tag() }}
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Title:<span id="required-splat" style="color: red;">*</span></div>
-                    <div class="col-sm-8">{{ form.title(class="form-control", size=26) }}</div>
+                    <div class="col-sm-8">{{ form.title(class="form-control", id="addTitle", size=26) }}</div>
                 </div>
                 {% if form.subjects.choices %}
                     <div class="row" id="modal-row">
                         {{ form.hidden_tag() }}
                         <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Subject:<span id="required-splat" style="color: red;">*</span></div>
-                        <div class="col-sm-8">{{ form.subjects(class="form-control") }}</div>
+                        <div class="col-sm-8">{{ form.subjects(class="form-control", id="addSub") }}</div>
                     </div>    
                 {% endif %}
                 <div class="row" id="modal-row">
                     {{ form.hidden_tag() }}
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Due Date:<span id="required-splat" style="color: red;">*</span></div>
-                    <div class="col-sm-8">{{ form.date(class="form-control",size=26) }}</div>
+                    <div class="col-sm-8">{{ form.date(class="form-control", id="addDate", size=26) }}</div>
                 </div>
                 <div class="row" id="modal-row">
                     {{ form.hidden_tag() }}
                     <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Description:</div>
-                    <div class="col-sm-8">{{ form.description(class="form-control",size=256) }}</div>
+                    <div class="col-sm-8">{{ form.description(class="form-control", id="addDesc", size=256) }}</div>
                 </div>
-                <div class="row" id="modal-row">
-                    {{ form.hidden_tag() }}
-                    <div class="col-sm-4" style="font-size: 18px; display: flex; align-items: center;;">Type:</div>
-                    <div class="col-sm-8">{{ form.assign_type(class="form-control") }}</div>
+                <input type="hidden" name="taskid" id="taskID">
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class="btn btn-outline-dark", id="modalAddSubBtn") }}
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteAssignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addAssignModalLabel">Delete Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ url_for('delete_task') }}" method="post" id="deleteForm">
+            <div class="modal-body">
+                <div class="row col-md-12" id="modal-row">
+                    <p id="assignToDelete">Delete Assignment:</p>
                 </div>
             </div>
             <div class="modal-footer">
-                {{ form.submit(class="btn btn-outline-dark") }}
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-secondary" onclick="confirm_delete">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <input type="hidden" name="taskid" id="deleteid">
             </div>
         </form>
       </div>
@@ -109,8 +144,12 @@
 <script type="text/javascript">
 
 var task_buttons = document.getElementsByClassName("task-buttons");
+var edit_button = document.getElementById("editAssignBtn");
+var delete_button = document.getElementById("deleteAssignBtn");
+var add_button = document.getElementById("addAssignBtn");
 
 for (button of task_buttons) {
+
     button.addEventListener("click", function() {
         var task_id = this.dataset.taskid;
         var task_name = this.dataset.taskname;
@@ -118,12 +157,18 @@ for (button of task_buttons) {
         var task_date = this.dataset.taskdate;
         var task_description = this.dataset.taskdescription;
         var task_subject = this.dataset.tasksubject;
+        window.selectedTask = task_id;
 
         var text_color = getContrastYIQ(task_color.slice(1));
+        var date_obj = date = new Date(task_date);
+        var formatted_date = date_obj.getMonth() + 1  + '-' + date_obj.getDate() + '-' + date_obj.getFullYear();
+
+        edit_button.disabled = false;
+        delete_button.disabled = false;
 
         document.getElementById("taskNameLine").value = task_name;
         document.getElementById("taskSubjectLine").value = task_subject;
-        document.getElementById("taskDateLine").value = task_date.split(' ')[0];
+        document.getElementById("taskDateLine").value = formatted_date;
         document.getElementById("taskDescriptionLine").value = task_description;
         document.getElementById("taskInfoHead").classList.remove("text-light");
         document.getElementById("taskInfoHead").classList.remove("bg-dark");
@@ -138,7 +183,90 @@ for (button of task_buttons) {
             return (yiq >= 128) ? 'black' : 'white';
         }
 
-    })
+    });
+
+    var due_date = button.dataset.taskdate;
+    var due_date_obj = new Date(due_date);
+    var today = new Date();
+    var date_diff_time = today.getTime() - due_date_obj.getTime();
+    var date_diff_days = date_diff_time / (1000 * 3600 * 24);
+
+    if (date_diff_days > 0) {
+        button.querySelector("#listDueDate").style.color = "red";
+    } else if (date_diff_days > -2) {
+        button.querySelector("#listDueDate").style.color = "orange";
+    }
+}
+
+edit_button.addEventListener("click", function() {
+    var current_title = document.getElementById("taskNameLine").value;
+    var current_subject = document.getElementById("taskSubjectLine").value;
+    var current_task_due_date = document.getElementById("taskDateLine").value;
+    var current_desc = document.getElementById("taskDescriptionLine").value;
+
+    var date_obj = new Date(current_task_due_date);
+
+    var day = ("0" + date_obj.getDate()).slice(-2);
+    var month = ("0" + (date_obj.getMonth() + 1)).slice(-2);
+    var formatted_due_date = date_obj.getFullYear()+"-"+(month)+"-"+(day) ;
+
+    document.getElementById("addAssignForm").action = "{{ url_for('edit_task') }}";
+    document.getElementById("addAssignModalLabel").innerHTML = "Edit Task";
+    document.getElementById("addTitle").value = current_title;
+    document.getElementById("addSub").selectedIndex = get_select_by_text(current_subject, document.getElementById("addSub"));
+    document.getElementById("addDate").value = formatted_due_date;
+    document.getElementById("addDesc").value = current_desc;
+    document.getElementById("taskID").value = window.selectedTask;
+    document.getElementById("addSub").disabled = true;
+});
+
+delete_button.addEventListener("click", function() {
+    var current_title = document.getElementById("taskNameLine").value;
+
+    document.getElementById("assignToDelete").innerHTML = "Delete Assignment: " + current_title;
+    document.getElementById("deleteid").value = window.selectedTask;
+});
+
+function confirm_delete() {
+    document.getElementById("deleteForm").submit();
+}
+
+add_button.addEventListener("click", function() {
+    document.getElementById("addAssignForm").action = "{{ url_for('add_task') }}";
+    document.getElementById("addAssignModalLabel").innerHTML = "Add Task";
+    document.getElementById("addTitle").value = "";
+    document.getElementById("addSub").selectedIndex = "";
+    document.getElementById("addDate").value = "";
+    document.getElementById("addDesc").value = "";
+    document.getElementById("addSub").disabled = false;
+
+});
+
+function get_select_by_text(text_to_find, select_box) {
+    for (var i=0; i < select_box.options.length; i++) {
+        if (select_box.options[i].text == text_to_find) {
+            return i;
+        }
+    }
+}
+
+function selectSubject() {
+    var subject_filter = document.getElementById("subjectFilter");
+    var task_buttons = document.getElementsByClassName("task-buttons");
+    var selectedFilter = subject_filter.value;
+    for (var i = 0; i < task_buttons.length; i++) {
+        switch (selectedFilter) {
+            case "All":
+                task_buttons[i].style.display = "";
+                break;
+            default:
+                if (task_buttons[i].dataset.tasksubject != selectedFilter ) {
+                    task_buttons[i].style.display = "none";
+                } else {
+                    task_buttons[i].style.display = "";
+                }
+        }
+    }
 }
 
 </script>
