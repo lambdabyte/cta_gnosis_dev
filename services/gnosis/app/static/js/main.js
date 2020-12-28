@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(){
     };
     function onRelease(){
         // When a user lets go of a block w/ no parent
-        
+
     };
     function onSnap(block, first, parent){
         // When a block snaps with another one. True allows snapping.

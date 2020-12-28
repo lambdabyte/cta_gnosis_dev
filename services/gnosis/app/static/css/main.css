@@ -150,6 +150,8 @@ h1#profileUsername {
 
 #goalContainer {
     height: 100vh;
+    background-color: white;
+    user-select: none;
 }
 
 #goalRow {
@@ -160,18 +162,22 @@ h1#profileUsername {
     border: 1px solid grey;
     width: fit-content;
     padding: 1rem 1rem 1rem 1rem;
-    min-width: 366px;
     height: 60vh;
     overflow-y: scroll;
+    background-color: white;
+    margin-left: 2rem;
 }
 
 .card.create-flowy {
-    width: 300px;
+    width: 200px;
+    background-color: white;
+    user-select: none;
 }
 
 #goalCardBody {
-    width: 300px;
+    width: 200px;
     text-align: left;
+    user-select: none;
 }
 
 #goalCardTitle {
@@ -182,11 +188,13 @@ h1#profileUsername {
     font-size: 14px; 
     margin-right: 0.3rem;
     float: right; 
+    user-select: none;
 }
 
 #taskTitle {
     font-size: 14px; 
     color: grey;
+    user-select: none;
 }
 
 #task-id {
@@ -197,7 +205,7 @@ h1#profileUsername {
     padding-left: .5rem; 
     border: 1px solid lightgrey; 
     height: 40px; 
-    width: 260px; 
+    width: 160px; 
     font-size: 14px;
     margin: auto;
     text-align: left;
@@ -206,21 +214,16 @@ h1#profileUsername {
 #can-col {
     padding: 1rem 1rem 1rem 1rem; 
     height: 85vh;
+    width: 100%;
 }
 
 #canvas {
     position: absolute;
-    width: 1728px;
+    width: 90%;
+    left: 15;
     height: 80%;
-    border: 1px solid grey;
     overflow-y: auto;
     overflow-x: hidden;
-}
-
-@media only screen and (max-width: 991px) {
-    #canvas {
-        display: block;
-    }
 }
 
 #plannerHead {
@@ -234,6 +237,7 @@ h1#profileUsername {
     bottom: 0; 
     left: 0; 
     right: 0; 
+    top: 100%;
     margin-left: auto; 
     margin-right:auto;
 }
@@ -333,7 +337,4 @@ textarea {
     .desktop-text {
         display: none;
     }
-
-    
-
   }

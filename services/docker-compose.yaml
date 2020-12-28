@@ -10,6 +10,9 @@ services:
             - type: bind
               source: ./gnosis
               target: /home/gnosis/services/gnosis
+            - type: bind
+              source: ./gnosis/local_config/.aws
+              target: /home/gnosis/.aws
         ports:
             - 8080:5000
             - 5432:5432
